@@ -28,7 +28,7 @@ import java.util.stream.Stream;
  * @see Collection
  * @see Array
  */
-public class ImmutableArray<E> implements Array<E> {
+public class ImmutableArray<E> implements Array<E>, Cloneable {
 
     private static final Object[] EMPTY_ARRAY = new Object[0];
 
@@ -291,6 +291,11 @@ public class ImmutableArray<E> implements Array<E> {
      */
     @Override
     public Object clone() {
-        return new ImmutableArray<>(elementData);
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            // This shouldn't happen
+            throw new InternalError(e);
+        }
     }
 }
