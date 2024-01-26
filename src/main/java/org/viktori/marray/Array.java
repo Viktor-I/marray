@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.function.Predicate;
 
 public interface Array<E> extends Collection<E> {
 
@@ -29,13 +30,13 @@ public interface Array<E> extends Collection<E> {
      *
      * @param o element to search for
      * @return the index of the first occurrence of the specified element in
-     *         this list, or -1 if this list does not contain the element
-     * @throws ClassCastException if the type of the specified element
-     *         is incompatible with this list
-     *         (<a href="Collection.html#optional-restrictions">optional</a>)
+     * this list, or -1 if this list does not contain the element
+     * @throws ClassCastException   if the type of the specified element
+     *                              is incompatible with this list
+     *                              (<a href="Collection.html#optional-restrictions">optional</a>)
      * @throws NullPointerException if the specified element is null and this
-     *         list does not permit null elements
-     *         (<a href="Collection.html#optional-restrictions">optional</a>)
+     *                              list does not permit null elements
+     *                              (<a href="Collection.html#optional-restrictions">optional</a>)
      */
     int indexOf(Object o);
 
@@ -48,13 +49,13 @@ public interface Array<E> extends Collection<E> {
      *
      * @param o element to search for
      * @return the index of the last occurrence of the specified element in
-     *         this list, or -1 if this list does not contain the element
-     * @throws ClassCastException if the type of the specified element
-     *         is incompatible with this list
-     *         (<a href="Collection.html#optional-restrictions">optional</a>)
+     * this list, or -1 if this list does not contain the element
+     * @throws ClassCastException   if the type of the specified element
+     *                              is incompatible with this list
+     *                              (<a href="Collection.html#optional-restrictions">optional</a>)
      * @throws NullPointerException if the specified element is null and this
-     *         list does not permit null elements
-     *         (<a href="Collection.html#optional-restrictions">optional</a>)
+     *                              list does not permit null elements
+     *                              (<a href="Collection.html#optional-restrictions">optional</a>)
      */
     int lastIndexOf(Object o);
 
@@ -65,7 +66,7 @@ public interface Array<E> extends Collection<E> {
      * sequence).
      *
      * @return a list iterator over the elements in this array (in proper
-     *         sequence)
+     * sequence)
      */
     ListIterator<E> listIterator();
 
@@ -78,14 +79,32 @@ public interface Array<E> extends Collection<E> {
      * return the element with the specified index minus one.
      *
      * @param index index of the first element to be returned from the
-     *        list iterator (by a call to {@link ListIterator#next next})
+     *              list iterator (by a call to {@link ListIterator#next next})
      * @return a list iterator over the elements in this list (in proper
-     *         sequence), starting at the specified position in the list
+     * sequence), starting at the specified position in the list
      * @throws IndexOutOfBoundsException if the index is out of range
-     *         ({@code index < 0 || index > size()})
+     *                                   ({@code index < 0 || index > size()})
      */
     ListIterator<E> listIterator(int index);
 
+    // View
+
+    /**
+     * Returns a new array of the portion of this array between the specified
+     * {@code fromIndex}, inclusive, and {@code toIndex}, exclusive.  (If
+     * {@code fromIndex} and {@code toIndex} are equal, the returned array is
+     * empty.)
+     *
+     * @param fromIndex low endpoint (inclusive) of the subArray
+     * @param toIndex   high endpoint (exclusive) of the subArray
+     * @return a view of the specified range within this array
+     * @throws ArrayIndexOutOfBoundsException for an illegal endpoint index value
+     *                                        ({@code fromIndex < 0 || toIndex > size ||
+     *                                        fromIndex > toIndex})
+     * @throws IllegalArgumentException       if the endpoint indices are out of order
+     *                                        {@code (fromIndex > toIndex)}
+     */
+    Array<E> subArray(int fromIndex, int toIndex);
 
     // Query Operations
 
@@ -101,7 +120,7 @@ public interface Array<E> extends Collection<E> {
      * APIs.
      *
      * @return a list containing all of the elements in this array in proper
-     *         sequence
+     * sequence
      * @see Arrays#asList(Object[])
      */
     List<E> toList();
@@ -142,5 +161,94 @@ public interface Array<E> extends Collection<E> {
      * @see #equals(Object)
      */
     int hashCode();
+
+    /**
+     * Adding an object to a fixed size array is not supported, but it is part of the
+     * {@link Collection} API. This action will always throw an {@link UnsupportedOperationException}.
+     *
+     * @param e element whose presence in this collection is to be ensured
+     * @return nothing, as it will always throw an exception
+     * @throws UnsupportedOperationException always
+     */
+    @Override
+    default boolean add(E e) throws UnsupportedOperationException {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Adding objects to a fixed size array is not supported, but it is part of the
+     * {@link Collection} API. This action will always throw an {@link UnsupportedOperationException}.
+     *
+     * @param c – collection containing elements to be added to this collection
+     * @return nothing, as it will always throw an exception
+     * @throws UnsupportedOperationException always
+     */
+    @Override
+    default boolean addAll(Collection<? extends E> c) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Removing an object from a fixed size array is not supported, but it is part of the
+     * {@link Collection} API. This action will always throw an {@link UnsupportedOperationException}.
+     *
+     * @param o element to be removed from this collection, if present
+     * @return nothing, as it will always throw an exception
+     * @throws UnsupportedOperationException always
+     */
+    @Override
+    default boolean remove(Object o) throws UnsupportedOperationException {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Removing objects from a fixed size array is not supported, but it is part of the
+     * {@link Collection} API. This action will always throw an {@link UnsupportedOperationException}.
+     *
+     * @param filter a predicate which returns {@code true} for elements to be removed
+     * @return nothing, as it will always throw an exception
+     * @throws UnsupportedOperationException always
+     */
+    @Override
+    default boolean removeIf(Predicate<? super E> filter) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Removing objects from a fixed size array is not supported, but it is part of the
+     * {@link Collection} API. This action will always throw an {@link UnsupportedOperationException}.
+     *
+     * @param c collection containing elements to be removed from this collection
+     * @return nothing, as it will always throw an exception
+     * @throws UnsupportedOperationException always
+     */
+    @Override
+    default boolean removeAll(Collection<?> c) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Removing objects from a fixed size array is not supported, but it is part of the
+     * {@link Collection} API. This action will always throw an {@link UnsupportedOperationException}.
+     *
+     * @param c collection containing elements to be retained in this collection
+     * @return nothing, as it will always throw an exception
+     * @throws UnsupportedOperationException always
+     */
+    @Override
+    default boolean retainAll(Collection<?> c) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Removing objects from a fixed size array is not supported, but it is part of the
+     * {@link Collection} API. This action will always throw an {@link UnsupportedOperationException}.
+     *
+     * @throws UnsupportedOperationException always
+     */
+    @Override
+    default void clear() {
+        throw new UnsupportedOperationException();
+    }
 
 }

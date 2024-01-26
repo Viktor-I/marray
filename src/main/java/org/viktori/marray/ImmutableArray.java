@@ -89,6 +89,31 @@ public class ImmutableArray<E> implements Array<E>, Cloneable {
         }
     }
 
+    /**
+     * Constructs an immutable array based on an existing array and indices.
+     * This is a private constructor used for internal operations only, as it is unsafe.
+     *
+     * @param source parent immutable array
+     * @param fromIndex index to copy from (inclusive)
+     * @param toIndex index to copy to (exclusive)
+     */
+    private ImmutableArray(ImmutableArray<E> source, int fromIndex, int toIndex) {
+        if (fromIndex == 0 && toIndex == source.elementData.length) {
+            this.elementData = source.elementData;
+        } else if (toIndex - fromIndex != 0) {
+            this.elementData = Arrays.copyOfRange(source.elementData, fromIndex, toIndex);
+        } else {
+            this.elementData = EMPTY_ARRAY;
+        }
+    }
+
+    /**
+     * Returns the element at the specified position in this array.
+     *
+     * @param  index index of the element to return
+     * @return the element at the specified position in this array
+     * @throws ArrayIndexOutOfBoundsException {@inheritDoc}
+     */
     @Override
     @SuppressWarnings("unchecked")
     public E get(int index) {
@@ -230,33 +255,22 @@ public class ImmutableArray<E> implements Array<E>, Cloneable {
     }
 
     @Override
-    public boolean add(E t) {
-        throw new UnsupportedOperationException();
+    public Array<E> subArray(int fromIndex, int toIndex) {
+        subArrayRangeCheck(fromIndex, toIndex, elementData.length);
+        return new ImmutableArray<>(this, fromIndex, toIndex);
     }
 
-    @Override
-    public boolean remove(Object o) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean addAll(Collection<? extends E> c) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean removeAll(Collection<?> c) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean retainAll(Collection<?> c) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void clear() {
-        throw new UnsupportedOperationException();
+    private static void subArrayRangeCheck(int fromIndex, int toIndex, int size) {
+        if (fromIndex < 0) {
+            throw new IndexOutOfBoundsException("fromIndex = " + fromIndex);
+        }
+        if (toIndex > size) {
+            throw new IndexOutOfBoundsException("toIndex = " + toIndex);
+        }
+        if (fromIndex > toIndex) {
+            throw new IllegalArgumentException("fromIndex(" + fromIndex +
+                    ") > toIndex(" + toIndex + ")");
+        }
     }
 
     @Override
