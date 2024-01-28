@@ -12,6 +12,7 @@
 marray.iml
 marray.ipr
 marray.iws
+local.properties
 
 # Gradle files
 .gradle/
