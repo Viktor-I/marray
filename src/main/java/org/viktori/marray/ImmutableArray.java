@@ -1,5 +1,7 @@
 package org.viktori.marray;
 
+import org.viktori.marray.function.ArrayIndexFunction;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -11,7 +13,7 @@ import java.util.stream.Stream;
 
 /**
  * Java array wrapper which implements the {@code Array} interface, which is immutable and easier
- * to work with than normal arrays as it is more similar to an ArrayList with
+ * to work with than normal arrays as it is more similar to a {@link List} with
  * fixed size.
  * The class implements all immutable Collection operations, and permits all elements,
  * including {@code null}. Mutable operations such as {@code add} or {@code remove} will result
@@ -39,14 +41,15 @@ public class ImmutableArray<E> implements Array<E>, Cloneable {
      * to populate values with.
      *
      * @param length the length of the array
+     * @param initFunction the function to initialize values in the array
      * @throws IllegalArgumentException if the specified initial capacity
      *                                  is negative
      */
-    public ImmutableArray(int length, IntFunction<E> initFunction) {
+    public ImmutableArray(int length, ArrayIndexFunction<E> initFunction) {
         if (length > 0) {
             this.elementData = new Object[length];
             for (int i = 0; i < length; i++) {
-                this.elementData[i] = initFunction.apply(i);
+                this.elementData[i] = initFunction.valueOf(i);
             }
         } else if (length == 0) {
             this.elementData = EMPTY_ARRAY; // Saves memory
