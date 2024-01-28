@@ -35,12 +35,13 @@ public class ImmutableArray<E> implements Array<E>, Cloneable {
     private static final Object[] EMPTY_ARRAY = new Object[0];
 
     private final Object[] elementData;
+    private final int size;
 
     /**
      * Constructs an immutable array with the specified length, and function
      * to populate values with.
      *
-     * @param length the length of the array
+     * @param length       the length of the array
      * @param initFunction the function to initialize values in the array
      * @throws IllegalArgumentException if the specified initial capacity
      *                                  is negative
@@ -56,6 +57,7 @@ public class ImmutableArray<E> implements Array<E>, Cloneable {
         } else {
             throw new IllegalArgumentException("Illegal Length: " + length);
         }
+        this.size = elementData.length;
     }
 
     /**
@@ -72,6 +74,7 @@ public class ImmutableArray<E> implements Array<E>, Cloneable {
         } else {
             this.elementData = EMPTY_ARRAY; // Saves memory
         }
+        this.size = elementData.length;
     }
 
     /**
@@ -90,30 +93,32 @@ public class ImmutableArray<E> implements Array<E>, Cloneable {
         } else {
             this.elementData = EMPTY_ARRAY;
         }
+        this.size = elementData.length;
     }
 
     /**
      * Constructs an immutable array based on an existing array and indices.
      * This is a private constructor used for internal operations only, as it is unsafe.
      *
-     * @param source parent immutable array
+     * @param source    parent immutable array
      * @param fromIndex index to copy from (inclusive)
-     * @param toIndex index to copy to (exclusive)
+     * @param toIndex   index to copy to (exclusive)
      */
     private ImmutableArray(ImmutableArray<E> source, int fromIndex, int toIndex) {
-        if (fromIndex == 0 && toIndex == source.elementData.length) {
+        if (fromIndex == 0 && toIndex == source.size) {
             this.elementData = source.elementData;
         } else if (toIndex - fromIndex != 0) {
             this.elementData = Arrays.copyOfRange(source.elementData, fromIndex, toIndex);
         } else {
             this.elementData = EMPTY_ARRAY;
         }
+        this.size = elementData.length;
     }
 
     /**
      * Returns the element at the specified position in this array.
      *
-     * @param  index index of the element to return
+     * @param index index of the element to return
      * @return the element at the specified position in this array
      * @throws ArrayIndexOutOfBoundsException {@inheritDoc}
      */
@@ -125,12 +130,12 @@ public class ImmutableArray<E> implements Array<E>, Cloneable {
 
     @Override
     public int size() {
-        return elementData.length;
+        return size;
     }
 
     @Override
     public boolean isEmpty() {
-        return elementData.length == 0;
+        return size == 0;
     }
 
     @Override
@@ -158,13 +163,13 @@ public class ImmutableArray<E> implements Array<E>, Cloneable {
     public int indexOf(Object o) {
         Object[] es = elementData;
         if (o == null) {
-            for (int i = 0; i < elementData.length; i++) {
+            for (int i = 0; i < size; i++) {
                 if (es[i] == null) {
                     return i;
                 }
             }
         } else {
-            for (int i = 0; i < elementData.length; i++) {
+            for (int i = 0; i < size; i++) {
                 if (o.equals(es[i])) {
                     return i;
                 }
@@ -183,13 +188,13 @@ public class ImmutableArray<E> implements Array<E>, Cloneable {
     public int lastIndexOf(Object o) {
         Object[] es = elementData;
         if (o == null) {
-            for (int i = elementData.length - 1; i >= 0; i--) {
+            for (int i = size - 1; i >= 0; i--) {
                 if (es[i] == null) {
                     return i;
                 }
             }
         } else {
-            for (int i = elementData.length - 1; i >= 0; i--) {
+            for (int i = size - 1; i >= 0; i--) {
                 if (o.equals(es[i])) {
                     return i;
                 }
@@ -231,24 +236,26 @@ public class ImmutableArray<E> implements Array<E>, Cloneable {
 
     @Override
     public Object[] toArray() {
-        return Arrays.copyOf(elementData, elementData.length);
+        return Arrays.copyOf(elementData, size);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <T> T[] toArray(T[] a) {
-        if (a.length < elementData.length)
+        if (a.length < size) {
             // Make a new array of a's runtime type, but my contents:
-            return (T[]) Arrays.copyOf(elementData, elementData.length, a.getClass());
-        System.arraycopy(elementData, 0, a, 0, elementData.length);
-        if (a.length > elementData.length)
-            a[elementData.length] = null;
+            return (T[]) Arrays.copyOf(elementData, size, a.getClass());
+        }
+        System.arraycopy(elementData, 0, a, 0, size);
+        if (a.length > size) {
+            a[size] = null;
+        }
         return a;
     }
 
     @Override
     public <T> T[] toArray(IntFunction<T[]> generator) {
-        return toArray(generator.apply(elementData.length));
+        return toArray(generator.apply(size));
     }
 
     @Override
@@ -259,7 +266,7 @@ public class ImmutableArray<E> implements Array<E>, Cloneable {
 
     @Override
     public Array<E> subArray(int fromIndex, int toIndex) {
-        subArrayRangeCheck(fromIndex, toIndex, elementData.length);
+        subArrayRangeCheck(fromIndex, toIndex, size);
         return new ImmutableArray<>(this, fromIndex, toIndex);
     }
 
