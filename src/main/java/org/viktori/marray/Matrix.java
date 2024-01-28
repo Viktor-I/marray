@@ -601,19 +601,22 @@ public interface Matrix<E> extends Collection<E> {
 
         @Override
         public boolean hasNext() {
-            return row < matrix.rows() && column < matrix.columns();
+            return row < matrix.rows();
         }
 
         @Override
         public E next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+
             E next = matrix.get(row, column);
             if (column < matrix.columns()) {
                 column++;
-            } else if (row < matrix.rows()) {
-                row++;
-                column = 0;
-            } else {
-                throw new NoSuchElementException();
+                if (column == matrix.columns()) {
+                    column = 0;
+                    row++;
+                }
             }
             return next;
         }

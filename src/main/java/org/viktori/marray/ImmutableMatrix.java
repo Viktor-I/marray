@@ -91,7 +91,7 @@ public class ImmutableMatrix<E> implements Matrix<E>, Cloneable {
         this.rows = elementData.length;
         this.columns = validateAndGetColumns(elementData);
         this.totalSize = (long) rows * (long) columns;
-        if (elementData.length > 0) {
+        if (rows > 0 && columns > 0) {
             this.elementData = new Object[rows][columns];
             for (int r = 0; r < rows; r++) {
                 System.arraycopy(elementData[r], 0, this.elementData[r], 0, columns);
@@ -231,7 +231,7 @@ public class ImmutableMatrix<E> implements Matrix<E>, Cloneable {
 
     @Override
     public boolean isEmpty() {
-        return elementData.length == 0;
+        return totalSize == 0;
     }
 
     @Override
