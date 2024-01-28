@@ -1,6 +1,8 @@
 package org.viktori.marray;
 
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
 
@@ -524,7 +526,7 @@ public interface Matrix<E> extends Collection<E> {
          * </pre>
          * </p>
          */
-        RIGHT,
+        RIGHT;
     }
 
     /**
@@ -589,4 +591,31 @@ public interface Matrix<E> extends Collection<E> {
         BOTH,
     }
 
+    final class MatrixIterator<E> implements Iterator<E> {
+        private final Matrix<E> matrix;
+        int row = 0;
+        int column = 0;
+        MatrixIterator(final Matrix<E> matrix) {
+            this.matrix = matrix;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return row < matrix.rows() && column < matrix.columns();
+        }
+
+        @Override
+        public E next() {
+            E next = matrix.get(row, column);
+            if (column < matrix.columns()) {
+                column++;
+            } else if (row < matrix.rows()) {
+                row++;
+                column = 0;
+            } else {
+                throw new NoSuchElementException();
+            }
+            return next;
+        }
+    }
 }
