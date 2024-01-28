@@ -99,8 +99,7 @@ public interface Array<E> extends Collection<E> {
      * @param toIndex   high endpoint (exclusive) of the subArray
      * @return a view of the specified range within this array
      * @throws ArrayIndexOutOfBoundsException for an illegal endpoint index value
-     *                                        ({@code fromIndex < 0 || toIndex > size ||
-     *                                        fromIndex > toIndex})
+     *                                        ({@code fromIndex < 0 || toIndex > size})
      * @throws IllegalArgumentException       if the endpoint indices are out of order
      *                                        {@code (fromIndex > toIndex)}
      */
