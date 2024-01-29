@@ -303,9 +303,7 @@ public class ImmutableMatrix<E> implements Matrix<E>, Cloneable {
         if (a.length < size) {
             // Make a new array of a's runtime type, but my contents:
             final Class<?> newType = a.getClass();
-            T[] copy = ((Object)newType == (Object)Object[].class)
-                    ? (T[]) new Object[size]
-                    : (T[]) java.lang.reflect.Array.newInstance(newType.getComponentType(), size);
+            T[] copy = createArrayOfType(size, newType);
             return toFlattenedArray(copy);
         }
         T[] flattened = toFlattenedArray(a);
@@ -322,6 +320,13 @@ public class ImmutableMatrix<E> implements Matrix<E>, Cloneable {
         }
 
         return toArray(generator.apply((int) totalSize));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> T[] createArrayOfType(int size, Class<?> newType) {
+        return ((Object) newType == (Object) Object[].class)
+                ? (T[]) new Object[size]
+                : (T[]) java.lang.reflect.Array.newInstance(newType.getComponentType(), size);
     }
 
     private <T> T[] toFlattenedArray(T[] array) {
@@ -344,27 +349,32 @@ public class ImmutableMatrix<E> implements Matrix<E>, Cloneable {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> T[][] toArray2D(T[][] a) {
         if (a.length < rows) {
             // Make a new array of a's runtime type, but my contents:
-            return toCopiedArray2D((T[][]) Arrays.copyOf(elementData, rows, a.getClass()));
+            T[][] copy = createArrayOfType(rows, a.getClass());
+            copy2DContentsInto(copy);
+            return copy;
         }
-        System.arraycopy(elementData, 0, a, 0, rows);
-        T[][] copied = toCopiedArray2D(a);
+        copy2DContentsInto(a);
         if (a.length > rows) {
             a[rows] = null;
         }
         return a;
     }
+
     @Override
     public <T> T[][] toArray2D(IntFunction<T[][]> generator) {
-        return toArray(generator.apply(rows));
+        return toArray2D(generator.apply(rows));
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T[][] toCopiedArray2D(T[][] array) {
+    private <T> void copy2DContentsInto(T[][] array) {
         for (int r = 0; r < rows; r++) {
+            if (array[r] == null) {
+                array[r] = createArrayOfType(columns, array.getClass().getComponentType());
+            }
+
             T[] ra = array[r];
             if (ra.length < columns) {
                 array[r] = (T[]) Arrays.copyOf(elementData[r], columns, ra.getClass());
@@ -375,7 +385,6 @@ public class ImmutableMatrix<E> implements Matrix<E>, Cloneable {
                 }
             }
         }
-        return array;
     }
 
 

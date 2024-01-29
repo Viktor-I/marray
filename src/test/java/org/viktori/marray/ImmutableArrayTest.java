@@ -1,5 +1,6 @@
 package org.viktori.marray;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
@@ -7,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -129,6 +131,33 @@ public class ImmutableArrayTest {
             assertEquals(expected, b);
         }
         assertEquals(10, loops);
+    }
+
+    @Test
+    public void testToList() {
+        Array<String> array = new ImmutableArray<>("abc", "def", "ghi");
+
+        assertEquals(List.of("abc", "def", "ghi"), array.toList());
+    }
+
+    @Test
+    public void testToArray() {
+        Array<String> array = new ImmutableArray<>("abc", "def", "ghi");
+
+        assertArrayEquals(new Object[]{"abc", "def", "ghi"}, array.toArray());
+        assertArrayEquals(new String[]{"abc", "def", "ghi"}, array.toArray(new String[0]));
+        assertArrayEquals(new String[]{"abc", "def", "ghi"}, array.toArray(new String[array.size()]));
+        assertArrayEquals(new String[]{"abc", "def", "ghi"}, array.toArray(String[]::new));
+    }
+
+    @Test
+    public void testToArrayDoesNotAllowMutation() {
+        Array<String> array = new ImmutableArray<>("abc", "def", "ghi");
+
+        Object[] rawArray = array.toArray();
+        Arrays.fill(rawArray, "Mutated");
+        assertEquals("Mutated", rawArray[1]);
+        assertEquals("def", array.get(1));
     }
 
     @Test
