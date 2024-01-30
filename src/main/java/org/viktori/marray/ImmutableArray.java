@@ -68,13 +68,7 @@ public class ImmutableArray<E> implements Array<E>, Cloneable {
      */
     @SafeVarargs
     public ImmutableArray(E... elementData) {
-        if (elementData.length > 0) {
-            this.elementData = new Object[elementData.length];
-            System.arraycopy(elementData, 0, this.elementData, 0, elementData.length);
-        } else {
-            this.elementData = EMPTY_ARRAY; // Saves memory
-        }
-        this.size = elementData.length;
+        this(elementData, false);
     }
 
     /**
@@ -86,31 +80,22 @@ public class ImmutableArray<E> implements Array<E>, Cloneable {
      * @throws NullPointerException if the specified collection is null
      */
     public ImmutableArray(Collection<? extends E> collection) {
-        if (collection instanceof ImmutableArray<?> ia) {
-            this.elementData = ia.elementData;
-        } else if (collection.size() > 0) {
-            this.elementData = collection.toArray();
-        } else {
-            this.elementData = EMPTY_ARRAY;
-        }
-        this.size = elementData.length;
+        this(collection instanceof ImmutableArray<?> ia ? ia.elementData : collection.toArray(), true);
     }
 
-    /**
-     * Constructs an immutable array based on an existing array and indices.
-     * This is a private constructor used for internal operations only, as it is unsafe.
-     *
-     * @param source    parent immutable array
-     * @param fromIndex index to copy from (inclusive)
-     * @param toIndex   index to copy to (exclusive)
-     */
-    private ImmutableArray(ImmutableArray<E> source, int fromIndex, int toIndex) {
-        if (fromIndex == 0 && toIndex == source.size) {
-            this.elementData = source.elementData;
-        } else if (toIndex - fromIndex != 0) {
-            this.elementData = Arrays.copyOfRange(source.elementData, fromIndex, toIndex);
-        } else {
+    protected ImmutableArray() {
+        this.elementData = EMPTY_ARRAY;
+        this.size = 0;
+    }
+
+    protected ImmutableArray(Object[] elementData, boolean trusted) {
+        if (elementData.length == 0) {
             this.elementData = EMPTY_ARRAY;
+        } else if (trusted) {
+            this.elementData = elementData;
+        } else {
+            this.elementData = new Object[elementData.length];
+            System.arraycopy(elementData, 0, this.elementData, 0, elementData.length);
         }
         this.size = elementData.length;
     }
@@ -267,7 +252,11 @@ public class ImmutableArray<E> implements Array<E>, Cloneable {
     @Override
     public Array<E> subArray(int fromIndex, int toIndex) {
         subArrayRangeCheck(fromIndex, toIndex, size);
-        return new ImmutableArray<>(this, fromIndex, toIndex);
+
+        return new ImmutableArray<>(fromIndex == 0 && toIndex == size
+                ? elementData
+                : Arrays.copyOfRange(elementData, fromIndex, toIndex),
+                true);
     }
 
     private static void subArrayRangeCheck(int fromIndex, int toIndex, int size) {

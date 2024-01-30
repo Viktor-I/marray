@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 public interface Array<E> extends Collection<E> {
@@ -250,4 +251,115 @@ public interface Array<E> extends Collection<E> {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Returns an immutable array containing zero elements.
+     *
+     * @param <E> the {@code Array}'s element type
+     * @return an empty {@code Array}
+     */
+    static <E> Array<E> of() {
+        return new ImmutableArray<>();
+    }
+
+    /**
+     * Returns an immutable array containing one non-null element.
+     *
+     * @param <E> the {@code Array}'s element type
+     * @param e1 the single element
+     * @return an {@code Array} containing the specified element
+     * @throws NullPointerException if the element is {@code null}
+     */
+    static <E> Array<E> of(E e1) {
+        return new ImmutableArray<>(requireNonNull(e1), true);
+    }
+
+    /**
+     * Returns an immutable array containing two non-null elements.
+     *
+     * @param <E> the {@code Array}'s element type
+     * @param e1 the first element
+     * @param e2 the second element
+     * @return an {@code Array} containing the specified elements
+     * @throws NullPointerException if the element is {@code null}
+     */
+    static <E> Array<E> of(E e1, E e2) {
+        return new ImmutableArray<>(requireNonNull(e1, e2), true);
+    }
+
+    /**
+     * Returns an immutable array containing three non-null elements.
+     *
+     * @param <E> the {@code Array}'s element type
+     * @param e1 the first element
+     * @param e2 the second element
+     * @param e3 the third element
+     * @return an {@code Array} containing the specified elements
+     * @throws NullPointerException if the element is {@code null}
+     */
+    static <E> Array<E> of(E e1, E e2, E e3) {
+        return new ImmutableArray<>(requireNonNull(e1, e2, e3), true);
+    }
+
+    /**
+     * Returns an immutable array containing four non-null elements.
+     *
+     * @param <E> the {@code Array}'s element type
+     * @param e1 the first element
+     * @param e2 the second element
+     * @param e3 the third element
+     * @param e4 the fourth element
+     * @return an {@code Array} containing the specified elements
+     * @throws NullPointerException if the element is {@code null}
+     */
+    static <E> Array<E> of(E e1, E e2, E e3, E e4) {
+        return new ImmutableArray<>(requireNonNull(e1, e2, e3, e4), true);
+    }
+
+    /**
+     * Returns an immutable array containing five non-null elements.
+     *
+     * @param <E> the {@code Array}'s element type
+     * @param e1 the first element
+     * @param e2 the second element
+     * @param e3 the third element
+     * @param e4 the fourth element
+     * @param e5 the fifth element
+     * @return an {@code Array} containing the specified elements
+     * @throws NullPointerException if the element is {@code null}
+     */
+    static <E> Array<E> of(E e1, E e2, E e3, E e4, E e5) {
+        return new ImmutableArray<>(requireNonNull(e1, e2, e3, e4, e5), true);
+    }
+
+    /**
+     * Returns an immutable array containing an arbitrary number of non-null elements.
+     *
+     * @param <E>      the {@code Array}'s element type
+     * @param elements the elements to be contained in the array
+     * @return an {@code Array} containing the specified elements
+     * @throws NullPointerException if an element is {@code null} or if the array is {@code null}
+     * @apiNote This method also accepts a single raw array as an argument. The element type of
+     * the resulting array will be the component type of the raw array, and the size of
+     * the array will be equal to the length of the array. To create an array with
+     * a single element that is a raw array, do the following:
+     *
+     * <pre>{@code
+     *     String[] strings = ... ;
+     *     Array<String[]> array = Array.<String[]>of(strings);
+     * }</pre>
+     * <p>
+     * This will cause the {@link Array#of(Object) Array.of(E)} method
+     * to be invoked instead.
+     */
+    @SafeVarargs
+    static <E> Array<E> of(E... elements) {
+        return new ImmutableArray<>(requireNonNull((Object[]) elements), false);
+    }
+
+    private static Object[] requireNonNull(Object... elements) {
+        for (Object e: elements) {
+            Objects.requireNonNull(e);
+        }
+        return elements;
+    }
 }
