@@ -292,7 +292,6 @@ public class ImmutableMatrix<E> implements Matrix<E>, Cloneable {
         return toFlattenedArray(array);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T> T[] toArray(T[] a) {
         if (totalSize > Integer.MAX_VALUE) {
@@ -324,7 +323,7 @@ public class ImmutableMatrix<E> implements Matrix<E>, Cloneable {
 
     @SuppressWarnings("unchecked")
     private static <T> T[] createArrayOfType(int size, Class<?> newType) {
-        return ((Object) newType == (Object) Object[].class)
+        return newType == Object[].class
                 ? (T[]) new Object[size]
                 : (T[]) java.lang.reflect.Array.newInstance(newType.getComponentType(), size);
     }
@@ -429,7 +428,8 @@ public class ImmutableMatrix<E> implements Matrix<E>, Cloneable {
         return switch (rotation) {
             case NONE -> new ImmutableMatrix<>(rows, columns, (r, c) -> get(r, c));
             case LEFT -> new ImmutableMatrix<>(columns, rows, (r, c) -> get(c, columns - 1 - r));
-            case HALF -> new ImmutableMatrix<>(rows, columns, (r, c) -> get(rows - 1 - r, columns - 1 - c));
+            case HALF ->
+                    new ImmutableMatrix<>(rows, columns, (r, c) -> get(rows - 1 - r, columns - 1 - c));
             case RIGHT -> new ImmutableMatrix<>(columns, rows, (r, c) -> get(rows - 1 - c, r));
         };
     }
@@ -487,7 +487,6 @@ public class ImmutableMatrix<E> implements Matrix<E>, Cloneable {
             Object[] rowArray = elementData[r];
             stringBuilder.append(Arrays.toString(rowArray));
         }
-        ;
         stringBuilder.append("]");
         return stringBuilder.toString();
     }
