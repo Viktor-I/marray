@@ -534,26 +534,12 @@ public interface Matrix<E> extends Collection<E> {
      * <p>
      * Following options exist:
      * <ul>
-     *     <li>{@link #NONE} - no mirroring.</li>
      *     <li>{@link #ROWS} - mirror rows.</li>
      *     <li>{@link #COLUMNS} - mirror columns.</li>
-     *     <li>{@link #BOTH} - mirror both rows and columns.</li>
      * </ul>
      * </p>
      */
     enum Axis {
-        /**
-         * <p>No mirroring. (rowIndex = rowIndex, columnIndex = columnIndex)</p>
-         * <p>Example:<br>
-         * <pre>
-         * [1, 2, 3]    [4, 5, 6]<br>
-         * [4, 5, 6] -> [4, 5, 6]<br>
-         * [7, 8, 9]    [7, 8. 9]<br>
-         * </pre>
-         * </p>
-         */
-        NONE,
-
         /**
          * <p>Mirror rows, i.e. inverse column index. (rowIndex = rowIndex, columnIndex = columns - 1 - columnIndex)</p>
          * <p>Example:<br>
@@ -577,18 +563,6 @@ public interface Matrix<E> extends Collection<E> {
          * </p>
          */
         COLUMNS,
-
-        /**
-         * <p>Mirror both rows and columns, i.e. inverse row and column index. (rowIndex = rows - 1 - rowIndex, columnIndex = columns - 1 - columnIndex)</p>
-         * <p>Example:<br>
-         * <pre>
-         * [1, 2, 3]    [9, 8, 7]<br>
-         * [4, 5, 6] -> [6, 5, 4]<br>
-         * [7, 8, 9]    [3, 2. 1]<br>
-         * </pre>
-         * </p>
-         */
-        BOTH,
     }
 
     final class MatrixIterator<E> implements Iterator<E> {
