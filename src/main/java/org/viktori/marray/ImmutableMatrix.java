@@ -416,7 +416,7 @@ public class ImmutableMatrix<E> implements Matrix<E>, Cloneable {
     @Override
     @SuppressWarnings("unchecked")
     public Array<E> column(int columnIndex) {
-        final Object[] column = new Object[columns];
+        final Object[] column = new Object[rows];
         for (int r = 0; r < rows; r++) {
             column[r] = elementData[r][columnIndex];
         }

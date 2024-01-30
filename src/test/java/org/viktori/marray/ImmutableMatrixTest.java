@@ -45,7 +45,7 @@ public class ImmutableMatrixTest {
     }
 
     @Test
-    public void testGetIndexFromCollectionConstructor() {
+    public void testGetIndexFromCollectionConstructorWithLists() {
         Matrix<String> matrix = new ImmutableMatrix<>(List.of(List.of("d", "ef"), List.of("g", "hi"), List.of("ab", "c")));
         assertEquals("d", matrix.get(0, 0));
         assertEquals("ef", matrix.get(0, 1));
@@ -76,6 +76,36 @@ public class ImmutableMatrixTest {
     public void testGetIllegalArgumentFromColumnRowConsistency() {
         assertThrowsExactly(IllegalArgumentException.class, () -> new ImmutableMatrix<>(new String[][]{{"a", "b", "c"}, {"d", "e"}}));
         assertThrowsExactly(IllegalArgumentException.class, () -> new ImmutableMatrix<>(List.of(List.of("a", "b"), List.of("c", "d", "e"))));
+    }
+
+    @Test
+    public void testRow() {
+        Matrix<String> matrix = new ImmutableMatrix<>(new String[][]{{"a", "b", "c", "d"}, {"e", "f", "g", "h"}});
+        assertEquals(new ImmutableArray<>("a", "b", "c", "d"), matrix.row(0));
+        assertEquals(new ImmutableArray<>("e", "f", "g", "h"), matrix.row(1));
+    }
+
+    @Test
+    public void testRowOutOfBounds() {
+        Matrix<String> matrix = new ImmutableMatrix<>(new String[][]{{"a", "b", "c", "d"}, {"e", "f", "g", "h"}});
+        assertThrowsExactly(ArrayIndexOutOfBoundsException.class, () -> matrix.row(-1));
+        assertThrowsExactly(ArrayIndexOutOfBoundsException.class, () -> matrix.row(2));
+    }
+
+    @Test
+    public void testColumn() {
+        Matrix<String> matrix = new ImmutableMatrix<>(new String[][]{{"a", "b", "c", "d"}, {"e", "f", "g", "h"}});
+        assertEquals(new ImmutableArray<>("a", "e"), matrix.column(0));
+        assertEquals(new ImmutableArray<>("b", "f"), matrix.column(1));
+        assertEquals(new ImmutableArray<>("c", "g"), matrix.column(2));
+        assertEquals(new ImmutableArray<>("d", "h"), matrix.column(3));
+    }
+
+    @Test
+    public void testColumnOutOfBounds() {
+        Matrix<String> matrix = new ImmutableMatrix<>(new String[][]{{"a", "b", "c", "d"}, {"e", "f", "g", "h"}});
+        assertThrowsExactly(ArrayIndexOutOfBoundsException.class, () -> matrix.column(-1));
+        assertThrowsExactly(ArrayIndexOutOfBoundsException.class, () -> matrix.column(4));
     }
 
     @Test
@@ -145,6 +175,30 @@ public class ImmutableMatrixTest {
     }
 
     @Test
+    public void testIsSquareWhenSquare() {
+        Matrix<Integer> matrix = new ImmutableMatrix<>(3, 3, (r, c) -> r * c);
+        assertTrue(matrix.isSquare());
+    }
+
+    @Test
+    public void testIsSquareWhenNonSquare() {
+        Matrix<Integer> matrix = new ImmutableMatrix<>(2, 3, (r, c) -> r * c);
+        assertFalse(matrix.isSquare());
+    }
+
+    @Test
+    public void testIsSquareWhenEmpty() {
+        Matrix<Integer> matrix = new ImmutableMatrix<>(0, (r, c) -> r * c);
+        assertTrue(matrix.isSquare());
+    }
+
+    @Test
+    public void testIsSquareWhenNoRows() {
+        Matrix<Integer> matrix = new ImmutableMatrix<>(0, 3, (r, c) -> r * c);
+        assertFalse(matrix.isSquare());
+    }
+
+    @Test
     public void testIteratableInterface() {
         Matrix<String> matrix = new ImmutableMatrix<>(4, 3, (r, c) -> (r + 1) + "," + (c + 1));
 
@@ -193,8 +247,8 @@ public class ImmutableMatrixTest {
         Matrix<String> matrix = new ImmutableMatrix<>(new String[][]{{"a", "b", "c", "d"}, {"e", "f", "g", "h"}});
 
         Object[][] rawArray2D = matrix.toArray2D();
-        for (int r = 0; r < rawArray2D.length; r++) {
-            Arrays.fill(rawArray2D[r], "Mutated");
+        for (Object[] rawArrayRow : rawArray2D) {
+            Arrays.fill(rawArrayRow, "Mutated");
         }
         assertEquals("Mutated", rawArray2D[1][1]);
         assertEquals("f", matrix.get(1, 1));
