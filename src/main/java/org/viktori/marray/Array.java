@@ -356,10 +356,40 @@ public interface Array<E> extends Collection<E> {
         return new ImmutableArray<>(requireNonNull((Object[]) elements), false);
     }
 
+    /**
+     * Returns an immutable array containing the elements of
+     * the given Collection, in its iteration order. The given Collection must not be null,
+     * and it must not contain any null elements. If the given Collection is subsequently
+     * modified, the returned List will not reflect such modifications.
+     *
+     * @implNote
+     * If the given Collection is an immutable array,
+     * calling copyOf will generally not create a copy.
+     *
+     * @param <E> the {@code Array}'s element type
+     * @param coll a {@code Collection} from which elements are drawn, must be non-null
+     * @return an {@code Array} containing the elements of the given {@code Collection}
+     * @throws NullPointerException if coll is null, or if it contains any nulls
+     */
+    static <E> Array<E> copyOf(Collection<E> coll) {
+        if (coll instanceof ImmutableArray<E> ia) {
+            return requireNonNull(ia);
+        }
+        return new ImmutableArray<>(requireNonNull(coll));
+    }
+
     private static Object[] requireNonNull(Object... elements) {
         for (Object e: elements) {
             Objects.requireNonNull(e);
         }
         return elements;
+    }
+
+    private static <C extends Collection<?>> C requireNonNull(C coll) {
+        Objects.requireNonNull(coll);
+        for (Object e: coll) {
+            Objects.requireNonNull(e);
+        }
+        return coll;
     }
 }

@@ -5,6 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class ArrayTest {
 
     @Test
@@ -106,5 +109,33 @@ public class ArrayTest {
     public void testOfArbitraryNumberOfElementsWhereOneIsNull() {
         assertThrowsExactly(NullPointerException.class, () -> Array.of('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
                 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', null));
+    }
+
+    @Test
+    public void testOfCopyOfThreeElementsInArray() {
+        Array<Character> copy = Array.copyOf(Array.of('a', 'b', 'c'));
+        assertEquals(3, copy.size());
+        assertEquals('a', copy.get(0));
+        assertEquals('b', copy.get(1));
+        assertEquals('c', copy.get(2));
+    }
+
+    @Test
+    public void testOfCopyOfThreeElementsInArrayContainingNulls() {
+        assertThrowsExactly(NullPointerException.class, () -> Array.copyOf(new ImmutableArray<>(null, 'b', null)));
+    }
+
+    @Test
+    public void testOfCopyOfThreeElementsInList() {
+        Array<Character> copy = Array.copyOf(List.of('a', 'b', 'c'));
+        assertEquals(3, copy.size());
+        assertEquals('a', copy.get(0));
+        assertEquals('b', copy.get(1));
+        assertEquals('c', copy.get(2));
+    }
+
+    @Test
+    public void testOfCopyOfThreeElementsInListContainingNulls() {
+        assertThrowsExactly(NullPointerException.class, () -> Array.copyOf(Arrays.asList(null, 'b', null)));
     }
 }
