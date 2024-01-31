@@ -60,34 +60,6 @@ public interface Array<E> extends Collection<E> {
      */
     int lastIndexOf(Object o);
 
-    // List Iterators
-
-    /**
-     * Returns a list iterator over the elements in this array (in proper
-     * sequence).
-     *
-     * @return a list iterator over the elements in this array (in proper
-     * sequence)
-     */
-    ListIterator<E> listIterator();
-
-    /**
-     * Returns a list iterator over the elements in this array (in proper
-     * sequence), starting at the specified position in the array.
-     * The specified index indicates the first element that would be
-     * returned by an initial call to {@link ListIterator#next next}.
-     * An initial call to {@link ListIterator#previous previous} would
-     * return the element with the specified index minus one.
-     *
-     * @param index index of the first element to be returned from the
-     *              list iterator (by a call to {@link ListIterator#next next})
-     * @return a list iterator over the elements in this list (in proper
-     * sequence), starting at the specified position in the list
-     * @throws IndexOutOfBoundsException if the index is out of range
-     *                                   ({@code index < 0 || index > size()})
-     */
-    ListIterator<E> listIterator(int index);
-
     // View
 
     /**

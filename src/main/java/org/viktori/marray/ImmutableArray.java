@@ -199,16 +199,6 @@ public class ImmutableArray<E> implements Array<E>, Cloneable {
     }
 
     @Override
-    public ListIterator<E> listIterator() {
-        return toList().listIterator();
-    }
-
-    @Override
-    public ListIterator<E> listIterator(int index) {
-        return toList().listIterator(index);
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public Stream<E> stream() {
         return Stream.of((E[]) elementData);
