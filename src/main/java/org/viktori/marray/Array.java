@@ -91,7 +91,7 @@ public interface Array<E> extends Collection<E> {
     // View
 
     /**
-     * Returns a new array of the portion of this array between the specified
+     * Returns an array of the portion of this array between the specified
      * {@code fromIndex}, inclusive, and {@code toIndex}, exclusive.  (If
      * {@code fromIndex} and {@code toIndex} are equal, the returned array is
      * empty.)

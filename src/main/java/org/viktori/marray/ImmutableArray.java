@@ -251,20 +251,20 @@ public class ImmutableArray<E> implements Array<E>, Cloneable {
 
     @Override
     public Array<E> subArray(int fromIndex, int toIndex) {
-        subArrayRangeCheck(fromIndex, toIndex, size);
+        if (fromIndex == 0 && toIndex == size) {
+            return this;
+        }
 
-        return new ImmutableArray<>(fromIndex == 0 && toIndex == size
-                ? elementData
-                : Arrays.copyOfRange(elementData, fromIndex, toIndex),
-                true);
+        subArrayRangeCheck(fromIndex, toIndex, size);
+        return new ImmutableArray<>(Arrays.copyOfRange(elementData, fromIndex, toIndex), true);
     }
 
     private static void subArrayRangeCheck(int fromIndex, int toIndex, int size) {
         if (fromIndex < 0) {
-            throw new IndexOutOfBoundsException("fromIndex = " + fromIndex);
+            throw new ArrayIndexOutOfBoundsException("fromIndex = " + fromIndex);
         }
         if (toIndex > size) {
-            throw new IndexOutOfBoundsException("toIndex = " + toIndex);
+            throw new ArrayIndexOutOfBoundsException("toIndex = " + toIndex);
         }
         if (fromIndex > toIndex) {
             throw new IllegalArgumentException("fromIndex(" + fromIndex +

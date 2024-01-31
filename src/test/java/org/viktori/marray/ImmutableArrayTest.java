@@ -3,6 +3,7 @@ package org.viktori.marray;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -45,6 +46,30 @@ public class ImmutableArrayTest {
         assertEquals("001", array.get(0));
         assertEquals("013", array.get(12));
         assertEquals("025", array.get(24));
+    }
+
+    @Test
+    public void testSubArray() {
+        Array<Integer> array = new ImmutableArray<>(1, 2, 3, 4, 5);
+        assertSame(array, array.subArray(0, 5));
+        assertEquals(Array.of(1, 2, 3, 4), array.subArray(0, 4));
+        assertEquals(Array.of(2, 3, 4, 5), array.subArray(1, 5));
+        assertEquals(Array.of(3), array.subArray(2, 3));
+        assertEquals(Array.of(), array.subArray(0, 0));
+    }
+
+    @Test
+    public void testSubArrayWhereIndicesOutOfRange() {
+        Array<Integer> array = new ImmutableArray<>(1, 2, 3, 4, 5);
+        assertThrowsExactly(ArrayIndexOutOfBoundsException.class, () -> array.subArray(0, 6));
+        assertThrowsExactly(ArrayIndexOutOfBoundsException.class, () -> array.subArray(-1, 5));
+    }
+
+    @Test
+    public void testSubArrayWhereFromIndexGreaterThanToIndex() {
+        Array<Integer> array = new ImmutableArray<>(1, 2, 3, 4, 5);
+        assertThrowsExactly(IllegalArgumentException.class, () -> array.subArray(5, 0));
+        assertThrowsExactly(IllegalArgumentException.class, () -> array.subArray(3, 2));
     }
 
     @Test
