@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Spliterator;
 import java.util.function.IntFunction;
 import java.util.stream.Stream;
@@ -47,17 +46,21 @@ public class ImmutableArray<E> implements Array<E>, Cloneable {
      *                                  is negative
      */
     public ImmutableArray(int length, ArrayIndexFunction<E> initFunction) {
+        this(initiateArrayFromFunction(length, initFunction), true);
+    }
+
+    private static <E> Object[] initiateArrayFromFunction(int length, ArrayIndexFunction<E> initFunction) {
         if (length > 0) {
-            this.elementData = new Object[length];
+            Object[] elementData = new Object[length];
             for (int i = 0; i < length; i++) {
-                this.elementData[i] = initFunction.valueOf(i);
+                elementData[i] = initFunction.valueOf(i);
             }
+            return elementData;
         } else if (length == 0) {
-            this.elementData = EMPTY_ARRAY; // Saves memory
+            return EMPTY_ARRAY;
         } else {
             throw new IllegalArgumentException("Illegal Length: " + length);
         }
-        this.size = elementData.length;
     }
 
     /**
@@ -214,8 +217,8 @@ public class ImmutableArray<E> implements Array<E>, Cloneable {
         return Arrays.copyOf(elementData, size);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T[] toArray(T[] a) {
         if (a.length < size) {
             // Make a new array of a's runtime type, but my contents:
