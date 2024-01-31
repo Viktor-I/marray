@@ -10,9 +10,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 public class ImmutableArrayTest {
 
@@ -145,6 +147,20 @@ public class ImmutableArrayTest {
     }
 
     @Test
+    public void testIterator() {
+        Array<Boolean> array = new ImmutableArray<>(10, i -> i % 2 == 0);
+
+        int loops = 0;
+        Iterator<Boolean> it = array.iterator();
+        while (it.hasNext() && it.next() && it.hasNext()) {
+            Boolean b = it.next();
+            assertFalse(b);
+            loops++;
+        }
+        assertEquals(5, loops);
+    }
+
+    @Test
     public void testIteratableInterface() {
         Array<Boolean> array = new ImmutableArray<>(10, i -> i % 2 == 0);
 
@@ -156,6 +172,22 @@ public class ImmutableArrayTest {
             assertEquals(expected, b);
         }
         assertEquals(10, loops);
+    }
+
+    @Test
+    public void testStream() {
+        Array<String> array = new ImmutableArray<>("praise", "marray!");
+
+        String result = array.stream().map(String::toUpperCase).collect(Collectors.joining(" "));
+        assertEquals("PRAISE MARRAY!", result);
+    }
+
+    @Test
+    public void testParallelStream() {
+        Array<String> array = new ImmutableArray<>("praise", "marray!");
+
+        String result = array.parallelStream().map(String::toUpperCase).collect(Collectors.joining(" "));
+        assertEquals("PRAISE MARRAY!", result);
     }
 
     @Test
