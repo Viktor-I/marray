@@ -54,7 +54,8 @@ public class ImmutableMatrix<E> implements Matrix<E>, Cloneable {
 
     /**
      * Constructs an immutable square matrix with the specified length (width and height), and function
-     * to populate values with.
+     * to populate values with. When given explicit rows and columns like this, it is allowed to
+     * create a matrix with multiple rows and zero columns, or vice versa.
      *
      * @param rows         row count in the matrix (i.e. its height)
      * @param columns      column count in the matrix (i.e. its width)
@@ -88,29 +89,7 @@ public class ImmutableMatrix<E> implements Matrix<E>, Cloneable {
      * @throws IllegalArgumentException if column count is not consistent across all rows
      */
     public ImmutableMatrix(E[][] elementData) {
-        this.rows = elementData.length;
-        this.columns = validateAndGetColumns(elementData);
-        this.totalSize = (long) rows * (long) columns;
-        if (rows > 0 && columns > 0) {
-            this.elementData = new Object[rows][columns];
-            for (int r = 0; r < rows; r++) {
-                System.arraycopy(elementData[r], 0, this.elementData[r], 0, columns);
-            }
-        } else {
-            this.elementData = EMPTY_MATRIX; // Saves memory
-        }
-    }
-
-    private static <E> int validateAndGetColumns(E[][] elementData) {
-        int columns = 0;
-        for (int r = 0; r < elementData.length; r++) {
-            if (r == 0) {
-                columns = elementData[r].length;
-            } else if (elementData[r].length != columns) {
-                throw new IllegalArgumentException("Number of columns in matrix must be consistent across all rows");
-            }
-        }
-        return columns;
+        this(elementData, false, getRows(elementData), validateAndGetColumns(elementData));
     }
 
     /**
@@ -122,11 +101,10 @@ public class ImmutableMatrix<E> implements Matrix<E>, Cloneable {
      * @throws NullPointerException     if the specified collection is null
      * @throws IllegalArgumentException if size is not consistent across all inner collections
      */
-    public ImmutableMatrix(Collection<Collection<? extends E>> collections) {
-        this.rows = collections.size();
+    public <C extends Collection<E>> ImmutableMatrix(Collection<C> collections) {
         this.columns = validateAndGetColumns(collections);
-        this.totalSize = (long) rows * (long) columns;
-        if (collections.size() > 0) {
+        this.rows = columns > 0 ? collections.size() : 0;
+        if (rows > 0) {
             this.elementData = new Object[rows][columns];
             int r = 0;
             for (Collection<? extends E> row : collections) {
@@ -136,9 +114,56 @@ public class ImmutableMatrix<E> implements Matrix<E>, Cloneable {
         } else {
             this.elementData = EMPTY_MATRIX;
         }
+        this.totalSize = (long) rows * (long) columns;
     }
 
-    private static <E> int validateAndGetColumns(Collection<Collection<? extends E>> collections) {
+    /**
+     * Constructs an immutable matrix containing the elements of the specified
+     * matrix, in the same positions.
+     *
+     * @param matrix the matrix whose elements are to be placed into this matrix
+     * @throws NullPointerException if the specified matrix is null
+     */
+    public ImmutableMatrix(Matrix<? extends E> matrix) {
+        this(matrix instanceof ImmutableMatrix<?> im ? im.elementData : matrix.toArray2D(), true, matrix.rows(), matrix.columns());
+    }
+
+    private ImmutableMatrix(Object[][] elementData, boolean trusted, int rows, int columns) {
+        this.columns = columns;
+        this.rows = rows;
+        if (rows == 0 || columns == 0) {
+            this.elementData = EMPTY_MATRIX; // Saves memory
+        } else if (trusted) {
+            this.elementData = elementData;
+        } else {
+            this.elementData = new Object[rows][columns];
+            for (int r = 0; r < rows; r++) {
+                System.arraycopy(elementData[r], 0, this.elementData[r], 0, columns);
+            }
+        }
+        this.totalSize = (long) rows * (long) columns;
+    }
+
+    private static int getRows(Object[][] elementData) {
+        if (elementData.length > 0 && elementData[0].length > 0) {
+            return elementData.length;
+        }
+        return 0;
+    }
+
+    private static int validateAndGetColumns(Object[][] elementData) {
+        int columns = 0;
+        for (int r = 0; r < elementData.length; r++) {
+            if (r == 0) {
+                columns = elementData[r].length;
+            } else if (elementData[r].length != columns) {
+                throw new IllegalArgumentException("Number of columns in matrix must be consistent across all rows");
+            }
+        }
+        return columns;
+    }
+
+    private static <C extends Collection<E>, E> int validateAndGetColumns(Collection<C> collections) {
         int columns = 0;
         int r = 0;
         for (Collection<? extends E> row : collections) {
@@ -150,54 +175,6 @@ public class ImmutableMatrix<E> implements Matrix<E>, Cloneable {
             r++;
         }
         return columns;
-    }
-
-    /**
-     * Constructs an immutable matrix containing the elements of the specified
-     * matrix, in the same positions.
-     *
-     * @param matrix the matrix whose elements are to be placed into this matrix
-     * @throws NullPointerException if the specified matrix is null
-     */
-    public ImmutableMatrix(Matrix<? extends E> matrix) {
-        this.rows = matrix.rows();
-        this.columns = matrix.columns();
-        this.totalSize = (long) rows * (long) columns;
-        if (matrix instanceof ImmutableMatrix<?> ia) {
-            this.elementData = ia.elementData;
-        } else if (matrix.size() > 0) {
-            this.elementData = matrix.toArray2D();
-        } else {
-            this.elementData = EMPTY_MATRIX;
-        }
-    }
-
-    /**
-     * Constructs an immutable matrix based on an existing matrix and indices.
-     * This is a private constructor used for internal operations only, as it is unsafe.
-     *
-     * @param source          parent immutable matrix
-     * @param fromRowIndex    row index to copy from (inclusive)
-     * @param toRowIndex      row index to copy to (exclusive)
-     * @param fromColumnIndex column index to copy from (inclusive)
-     * @param toColumnIndex   column index to copy to (exclusive)
-     */
-    private ImmutableMatrix(ImmutableMatrix<E> source, int fromRowIndex, int toRowIndex, int fromColumnIndex, int toColumnIndex) {
-        this.rows = toRowIndex - fromRowIndex;
-        this.columns = toColumnIndex - fromColumnIndex;
-        this.totalSize = (long) rows * (long) columns;
-        if (rows == source.rows && columns == source.columns) {
-            this.elementData = source.elementData;
-        } else if (totalSize > 0) {
-            this.elementData = Arrays.copyOfRange(source.elementData, fromRowIndex, toRowIndex);
-            if (columns != source.columns) {
-                for (int r = 0; r < rows; r++) {
-                    elementData[r] = Arrays.copyOfRange(elementData[r], fromColumnIndex, toColumnIndex);
-                }
-            }
-        } else {
-            this.elementData = EMPTY_MATRIX;
-        }
     }
 
     /**
@@ -389,17 +366,30 @@ public class ImmutableMatrix<E> implements Matrix<E>, Cloneable {
 
     @Override
     public Matrix<E> subMatrix(int fromRowIndex, int toRowIndex, int fromColumnIndex, int toColumnIndex) {
+        if (fromRowIndex == 0 && toRowIndex == rows &&
+                fromColumnIndex == 0 && toColumnIndex == columns) {
+            return this;
+        }
+
         subMatrixRangeCheck(fromRowIndex, toRowIndex, rows);
         subMatrixRangeCheck(fromColumnIndex, toColumnIndex, columns);
-        return new ImmutableMatrix<>(this, fromRowIndex, toRowIndex, fromColumnIndex, toColumnIndex);
+
+        int rows = toRowIndex - fromRowIndex;
+        int columns = toColumnIndex - fromColumnIndex;
+        Object[][] elementData = new Object[rows][columns];
+        for (int i = 0, r = fromRowIndex; r < toRowIndex; i++, r++) {
+            elementData[i] = Arrays.copyOfRange(this.elementData[r], fromColumnIndex, toColumnIndex);
+        }
+
+        return new ImmutableMatrix<>(elementData, true, rows, columns);
     }
 
     private static void subMatrixRangeCheck(int fromIndex, int toIndex, int size) {
         if (fromIndex < 0) {
-            throw new IndexOutOfBoundsException("fromIndex = " + fromIndex);
+            throw new ArrayIndexOutOfBoundsException("fromIndex = " + fromIndex);
         }
         if (toIndex > size) {
-            throw new IndexOutOfBoundsException("toIndex = " + toIndex);
+            throw new ArrayIndexOutOfBoundsException("toIndex = " + toIndex);
         }
         if (fromIndex > toIndex) {
             throw new IllegalArgumentException("fromIndex(" + fromIndex +
@@ -482,7 +472,7 @@ public class ImmutableMatrix<E> implements Matrix<E>, Cloneable {
         stringBuilder.append("[");
         for (int r = 0; r < elementData.length; r++) {
             if (r > 0) {
-                stringBuilder.append(",");
+                stringBuilder.append(", ");
             }
             Object[] rowArray = elementData[r];
             stringBuilder.append(Arrays.toString(rowArray));
@@ -492,10 +482,10 @@ public class ImmutableMatrix<E> implements Matrix<E>, Cloneable {
     }
 
     /**
-     * Returns a shallow copy of this {@code ImmutableArray} instance.  (The
+     * Returns a shallow copy of this {@code ImmutableMatrix} instance.  (The
      * elements themselves are not copied.)
      *
-     * @return a clone of this {@code ImmutableArray} instance
+     * @return a clone of this {@code ImmutableMatrix} instance
      */
     @Override
     public Object clone() {
