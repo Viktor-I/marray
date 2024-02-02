@@ -305,12 +305,14 @@ public class ImmutableMatrix<E> implements Matrix<E>, Cloneable {
                 : (T[]) java.lang.reflect.Array.newInstance(newType.getComponentType(), size);
     }
 
+    @SuppressWarnings("unchecked")
     private <T> T[] toFlattenedArray(T[] array) {
         int i = 0;
         for (int r = 0; r < rows; r++) {
             Object[] row = elementData[r];
-            System.arraycopy(row, 0, array, i, row.length);
-            i += row.length;
+            for (int c = 0; c < columns; c++) {
+                array[i++] = (T) row[c];
+            }
         }
         return array;
     }
@@ -351,13 +353,14 @@ public class ImmutableMatrix<E> implements Matrix<E>, Cloneable {
                 array[r] = createArrayOfType(columns, array.getClass().getComponentType());
             }
 
-            T[] ra = array[r];
-            if (ra.length < columns) {
-                array[r] = (T[]) Arrays.copyOf(elementData[r], columns, ra.getClass());
+            if (array[r].length < columns) {
+                array[r] = (T[]) Arrays.copyOf(elementData[r], columns, array[r].getClass());
             } else {
-                System.arraycopy(elementData[r], 0, ra, 0, columns);
-                if (ra.length > columns) {
-                    ra[columns] = null;
+                for (int c = 0; c < columns; c++) {
+                    array[r][c] = (T) elementData[r][c];
+                }
+                if (array[r].length > columns) {
+                    array[r][columns] = null;
                 }
             }
         }

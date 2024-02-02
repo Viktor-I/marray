@@ -1,7 +1,5 @@
 package org.viktori.marray.function;
 
-import java.util.function.Function;
-
 /**
  * Represents a function that accepts row and column indices and produces a
  * result.

@@ -215,7 +215,7 @@ public interface Matrix<E> extends Collection<E> {
      * the same order.
      *
      * <p>Note that the returned array is not two-dimensional and will thus return all
-     * elements in all rows. Use {@link #toArray2D(IntFunction<T[][]>)} for a two-dimensional array.</p>
+     * elements in all rows. Use {@link #toArray2D(IntFunction)} for a two-dimensional array.</p>
      *
      * @apiNote
      * This method acts as a bridge between array-based and collection-based APIs.
@@ -312,9 +312,6 @@ public interface Matrix<E> extends Collection<E> {
      * <p>If this collection makes any guarantees as to what order its elements
      * are returned by its iterator, this method must return the elements in
      * the same order.
-     *
-     * <p>Note that the returned array is not two-dimensional and will thus return all
-     * elements in all rows. Use {@link #toArray2D(IntFunction<T[][]>)} for a two-dimensional array.</p>
      *
      * <p>Suppose {@code x} is a matrix known to contain only strings.
      * The following code can be used to dump the matrix into a newly
@@ -526,7 +523,7 @@ public interface Matrix<E> extends Collection<E> {
          * </pre>
          * </p>
          */
-        RIGHT;
+        RIGHT
     }
 
     /**

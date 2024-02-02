@@ -208,21 +208,21 @@ public class ImmutableArrayTest {
     @Test
     public void testContainsAllWhenNotFound() {
         Array<String> array = new ImmutableArray<>("abc", "def", "ghi");
-        assertFalse(array.containsAll(Set.of("jkl")));
+        assertFalse(array.containsAll(Set.of("jkl", "mno")));
     }
 
     @Test
     public void testSizeAndEmptyWhenEmpty() {
         Array<String> array = new ImmutableArray<>();
-        assertTrue(array.isEmpty());
         assertEquals(0, array.size());
+        assertTrue(array.isEmpty());
     }
 
     @Test
     public void testSizeAndEmptyWhenNotEmpty() {
         Array<String> array = new ImmutableArray<>("abc", "def");
-        assertFalse(array.isEmpty());
         assertEquals(2, array.size());
+        assertFalse(array.isEmpty());
     }
 
     @Test
@@ -240,7 +240,7 @@ public class ImmutableArrayTest {
     }
 
     @Test
-    public void testIteratableInterface() {
+    public void testIterableInterface() {
         Array<Boolean> array = new ImmutableArray<>(10, i -> i % 2 == 0);
 
         int loops = 0;

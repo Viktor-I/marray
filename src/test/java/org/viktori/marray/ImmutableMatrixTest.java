@@ -302,43 +302,43 @@ public class ImmutableMatrixTest {
     @Test
     public void testContainsAllWhenNotFound() {
         Matrix<String> matrix = new ImmutableMatrix<>(new String[][]{{"a", "b", "c"}, {"d", "e", "f"}, {"g", "h", "i"}});
-        assertFalse(matrix.containsAll(Set.of("j")));
+        assertFalse(matrix.containsAll(Set.of("j", "k")));
     }
 
     @Test
     public void testSizeAndEmptyWhenEmpty() {
         Matrix<String> matrix = new ImmutableMatrix<>(0, (r, c) -> "");
-        assertTrue(matrix.isEmpty());
         assertEquals(0, matrix.size());
         assertEquals(0, matrix.rows());
         assertEquals(0, matrix.columns());
+        assertTrue(matrix.isEmpty());
     }
 
     @Test
     public void testSizeAndEmptyWhenNotEmpty() {
         Matrix<String> matrix = new ImmutableMatrix<>(3, 2, (r, c) -> "");
-        assertFalse(matrix.isEmpty());
         assertEquals(6, matrix.size());
         assertEquals(3, matrix.rows());
         assertEquals(2, matrix.columns());
+        assertFalse(matrix.isEmpty());
     }
 
     @Test
     public void testSizeAndEmptyWhenNoRows() {
         Matrix<String> matrix = new ImmutableMatrix<>(0, 1, (r, c) -> "");
-        assertTrue(matrix.isEmpty());
         assertEquals(0, matrix.size());
         assertEquals(0, matrix.rows());
         assertEquals(1, matrix.columns());
+        assertTrue(matrix.isEmpty());
     }
 
     @Test
     public void testSizeAndEmptyWhenNoColumns() {
         Matrix<String> matrix = new ImmutableMatrix<>(2, 0, (r, c) -> "");
-        assertTrue(matrix.isEmpty());
         assertEquals(0, matrix.size());
         assertEquals(2, matrix.rows());
         assertEquals(0, matrix.columns());
+        assertTrue(matrix.isEmpty());
     }
 
     @Test
@@ -366,7 +366,7 @@ public class ImmutableMatrixTest {
     }
 
     @Test
-    public void testIteratableInterface() {
+    public void testIterableInterface() {
         Matrix<String> matrix = new ImmutableMatrix<>(4, 3, (r, c) -> (r + 1) + "," + (c + 1));
 
         Array<String> expected = new ImmutableArray<>("1,1", "1,2", "1,3", "2,1", "2,2", "2,3", "3,1", "3,2", "3,3", "4,1", "4,2", "4,3");

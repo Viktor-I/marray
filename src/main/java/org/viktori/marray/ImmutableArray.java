@@ -224,7 +224,9 @@ public class ImmutableArray<E> implements Array<E>, Cloneable {
             // Make a new array of a's runtime type, but my contents:
             return (T[]) Arrays.copyOf(elementData, size, a.getClass());
         }
-        System.arraycopy(elementData, 0, a, 0, size);
+        for (int i = 0; i < a.length; i++) {
+            a[i] = (T) elementData[i];
+        }
         if (a.length > size) {
             a[size] = null;
         }
