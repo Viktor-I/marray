@@ -1,4 +1,4 @@
-package org.viktori.marray.function;
+package org.viktori.matteray.function;
 
 /**
  * Represents a function that accepts an index and produces a

@@ -1,4 +1,4 @@
-package org.viktori.marray;
+package org.viktori.matteray;
 
 import java.util.Collection;
 import java.util.Iterator;

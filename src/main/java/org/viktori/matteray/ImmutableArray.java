@@ -1,6 +1,6 @@
-package org.viktori.marray;
+package org.viktori.matteray;
 
-import org.viktori.marray.function.ArrayIndexFunction;
+import org.viktori.matteray.function.ArrayIndexFunction;
 
 import java.util.Arrays;
 import java.util.Collection;

@@ -1,4 +1,4 @@
-package org.viktori.marray;
+package org.viktori.matteray;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;

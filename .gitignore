@@ -9,9 +9,9 @@
 
 # Ide files
 .idea/
-marray.iml
-marray.ipr
-marray.iws
+matteray.iml
+matteray.ipr
+matteray.iws
 local.properties
 
 # Gradle files
