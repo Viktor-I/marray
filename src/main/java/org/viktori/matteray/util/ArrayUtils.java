@@ -21,7 +21,7 @@ public final class ArrayUtils {
      *
      * @param array    array to apply the function on
      * @param function function to apply on each element
-     * @return a new immutable array based with the result of the function
+     * @return a new immutable array based on the result of the function
      * @throws NullPointerException if the array or the function is null
      */
     public static <E, R> Array<R> applyForEach(Array<E> array, Function<E, R> function) {
