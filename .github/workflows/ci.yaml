@@ -29,9 +29,9 @@ jobs:
         run: ./gradlew build
 
       - name: Report JUnit results
-        uses: nmgr/actions-junit-reporter@v3
+        uses: mikepenz/action-junit-report@v4
         if: success() || failure() # run even if build fails
         with:
-          checkName: 'Test results'
-          reportPath: build/reports/tests/*.xml
-          failOnSkipped: false
+          check_name: 'Test report'
+          report_paths: build/reports/tests/*.xml
+          require_tests: true
