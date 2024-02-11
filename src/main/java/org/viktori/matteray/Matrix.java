@@ -69,27 +69,6 @@ public interface Matrix<E> extends Collection<E> {
      */
     Array<E> column(int columnIndex);
 
-    // Transformations
-
-    /**
-     * Returns a new matrix containing all the elements in this matrix, but rotated based
-     * based on the specified rotation.
-     *
-     * @param rotation {@link Rotation} to apply
-     * @return a new matrix with the same elements, but rotated according to the specified rotation
-     * @see Rotation
-     */
-    Matrix<E> toRotatedMatrix(Rotation rotation);
-
-    /**
-     * Returns a new matrix containing all the elements in this matrix, but mirrored
-     * based on the specified mirroring axis.
-     *
-     * @param axis {@link Axis} to mirror.
-     * @return a new matrix with the same elements, but mirrored on the specified axis
-     */
-    Matrix<E> toMirroredMatrix(Axis axis);
-
     // Query operations
 
     /**

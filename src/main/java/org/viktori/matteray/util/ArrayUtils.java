@@ -3,6 +3,8 @@ package org.viktori.matteray.util;
 import org.viktori.matteray.Array;
 import org.viktori.matteray.ImmutableArray;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -48,5 +50,45 @@ public final class ArrayUtils {
         Objects.requireNonNull(array2);
         Objects.requireNonNull(mergeFunction);
         return new ImmutableArray<>(Math.min(array1.size(), array2.size()), i -> mergeFunction.apply(array1.get(i), array2.get(i)));
+    }
+
+    /**
+     * Sort a comparable array according to its natural order.
+     * @param array array to sort
+     * @return a new immutable array, sorted by its natural order
+     */
+    public static <E extends Comparable<E>> Array<E> toSorted(Array<E> array) {
+        Object[] rawArray = array.toArray();
+        Arrays.sort(rawArray);
+        return new SortedImmutableArray<>(rawArray);
+    }
+
+    /**
+     * Sort a comparable array based on a comparator.
+     * @param array array to sort
+     * @return a new immutable array, sorted according to comparator
+     */
+    @SuppressWarnings("unchecked")
+    public static <E> Array<E> toSorted(Array<E> array, Comparator<? super E> comparator) {
+        Object[] rawArray = array.toArray();
+        Arrays.sort(rawArray, (Comparator<Object>) Objects.requireNonNull(comparator));
+        return new SortedImmutableArray<>(rawArray);
+    }
+
+    private static class SortedImmutableArray<E> extends ImmutableArray<E> {
+        private SortedImmutableArray(Object[] elements) {
+            super(elements, true);
+        }
+    }
+
+    /**
+     * Return a new array where the indices are reversed.
+     * <p>Example: [15, 20, 10] -> [10, 20, 15]</p>
+     *
+     * @param array array to reverse
+     * @return a new immutable array where indices are reversed
+     */
+    public static <E extends Comparable<E>> Array<E> toReversed(Array<E> array) {
+        return new ImmutableArray<>(array.size(), i -> array.get(array.size() - 1 - i));
     }
 }

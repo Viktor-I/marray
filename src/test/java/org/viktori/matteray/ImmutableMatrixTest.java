@@ -438,52 +438,6 @@ public class ImmutableMatrixTest {
     }
 
     @Test
-    public void testToRotatedMatrixWhenSquare() {
-        Matrix<Integer> sourceMatrix = new ImmutableMatrix<>(new Integer[][]{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}});
-        Matrix<Integer> leftRotatedMatrix = new ImmutableMatrix<>(new Integer[][]{{3, 6, 9}, {2, 5, 8}, {1, 4, 7}});
-        Matrix<Integer> halfRotatedMatrix = new ImmutableMatrix<>(new Integer[][]{{9, 8, 7}, {6, 5, 4}, {3, 2, 1}});
-        Matrix<Integer> rightRotatedMatrix = new ImmutableMatrix<>(new Integer[][]{{7, 4, 1}, {8, 5, 2}, {9, 6, 3}});
-
-        assertEquals(sourceMatrix, sourceMatrix.toRotatedMatrix(Matrix.Rotation.NONE));
-        assertEquals(leftRotatedMatrix, sourceMatrix.toRotatedMatrix(Matrix.Rotation.LEFT));
-        assertEquals(halfRotatedMatrix, sourceMatrix.toRotatedMatrix(Matrix.Rotation.HALF));
-        assertEquals(rightRotatedMatrix, sourceMatrix.toRotatedMatrix(Matrix.Rotation.RIGHT));
-    }
-
-    @Test
-    public void testToRotatedMatrixWhenNonSquare() {
-        Matrix<Character> sourceMatrix = new ImmutableMatrix<>(new Character[][]{{'a', 'b', 'c', 'd'}, {'e', 'f', 'g', 'h'}, {'i', 'j', 'k', 'l'}});
-        Matrix<Character> leftRotatedMatrix = new ImmutableMatrix<>(new Character[][]{{'d', 'h', 'l'}, {'c', 'g', 'k'}, {'b', 'f', 'j'}, {'a', 'e', 'i'}});
-        Matrix<Character> halfRotatedMatrix = new ImmutableMatrix<>(new Character[][]{{'l', 'k', 'j', 'i'}, {'h', 'g', 'f', 'e'}, {'d', 'c', 'b', 'a'}});
-        Matrix<Character> rightRotatedMatrix = new ImmutableMatrix<>(new Character[][]{{'i', 'e', 'a'}, {'j', 'f', 'b'}, {'k', 'g', 'c'}, {'l', 'h', 'd'}});
-
-        assertEquals(sourceMatrix, sourceMatrix.toRotatedMatrix(Matrix.Rotation.NONE));
-        assertEquals(leftRotatedMatrix, sourceMatrix.toRotatedMatrix(Matrix.Rotation.LEFT));
-        assertEquals(halfRotatedMatrix, sourceMatrix.toRotatedMatrix(Matrix.Rotation.HALF));
-        assertEquals(rightRotatedMatrix, sourceMatrix.toRotatedMatrix(Matrix.Rotation.RIGHT));
-    }
-
-    @Test
-    public void testToMirroredMatrixWhenSquare() {
-        Matrix<Integer> sourceMatrix = new ImmutableMatrix<>(new Integer[][]{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}});
-        Matrix<Integer> rowsMirrored = new ImmutableMatrix<>(new Integer[][]{{3, 2, 1}, {6, 5, 4}, {9, 8, 7}});
-        Matrix<Integer> columnsMirrored = new ImmutableMatrix<>(new Integer[][]{{7, 8, 9}, {4, 5, 6}, {1, 2, 3}});
-
-        assertEquals(rowsMirrored, sourceMatrix.toMirroredMatrix(Matrix.Axis.ROWS));
-        assertEquals(columnsMirrored, sourceMatrix.toMirroredMatrix(Matrix.Axis.COLUMNS));
-    }
-
-    @Test
-    public void testToMirroredMatrixWhenNonSquare() {
-        Matrix<Character> sourceMatrix = new ImmutableMatrix<>(new Character[][]{{'a', 'b', 'c', 'd'}, {'e', 'f', 'g', 'h'}, {'i', 'j', 'k', 'l'}});
-        Matrix<Character> rowsMirrored = new ImmutableMatrix<>(new Character[][]{{'d', 'c', 'b', 'a'}, {'h', 'g', 'f', 'e'}, {'l', 'k', 'j', 'i'}});
-        Matrix<Character> columnsMirrored = new ImmutableMatrix<>(new Character[][]{{'i', 'j', 'k', 'l'}, {'e', 'f', 'g', 'h'}, {'a', 'b', 'c', 'd'}});
-
-        assertEquals(rowsMirrored, sourceMatrix.toMirroredMatrix(Matrix.Axis.ROWS));
-        assertEquals(columnsMirrored, sourceMatrix.toMirroredMatrix(Matrix.Axis.COLUMNS));
-    }
-
-    @Test
     public void testEqualsHashCodeWhenEqual() {
         Matrix<Object> randomMatrix1 = new ImmutableMatrix<>(new Object[][]{{1, "String"}, {2.5, null}, {List.of(1, 2, 3), null}});
         Matrix<Object> randomMatrix2 = new ImmutableMatrix<>(new Object[][]{{1, "String"}, {2.5, null}, {List.of(1, 2, 3), null}});

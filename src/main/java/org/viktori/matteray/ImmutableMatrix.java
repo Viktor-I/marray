@@ -417,25 +417,6 @@ public class ImmutableMatrix<E> implements Matrix<E>, Cloneable {
     }
 
     @Override
-    public Matrix<E> toRotatedMatrix(Rotation rotation) {
-        return switch (rotation) {
-            case NONE -> new ImmutableMatrix<>(rows, columns, (r, c) -> get(r, c));
-            case LEFT -> new ImmutableMatrix<>(columns, rows, (r, c) -> get(c, columns - 1 - r));
-            case HALF ->
-                    new ImmutableMatrix<>(rows, columns, (r, c) -> get(rows - 1 - r, columns - 1 - c));
-            case RIGHT -> new ImmutableMatrix<>(columns, rows, (r, c) -> get(rows - 1 - c, r));
-        };
-    }
-
-    @Override
-    public Matrix<E> toMirroredMatrix(Axis axis) {
-        return switch (axis) {
-            case ROWS -> new ImmutableMatrix<>(rows, columns, (r, c) -> get(r, columns - 1 - c));
-            case COLUMNS -> new ImmutableMatrix<>(rows, columns, (r, c) -> get(rows - 1 - r, c));
-        };
-    }
-
-    @Override
     public int hashCode() {
         int result = 1;
 

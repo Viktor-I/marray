@@ -67,4 +67,50 @@ public class MatrixUtilsTest {
         assertThrows(NullPointerException.class, () -> MatrixUtils.mergeForEach(matrix, null, (str1, str2) -> ""));
         assertThrows(NullPointerException.class, () -> MatrixUtils.mergeForEach(matrix, matrix, null));
     }
+
+    @Test
+    public void testToRotatedWhenSquare() {
+        Matrix<Integer> sourceMatrix = new ImmutableMatrix<>(new Integer[][]{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}});
+        Matrix<Integer> leftRotatedMatrix = new ImmutableMatrix<>(new Integer[][]{{3, 6, 9}, {2, 5, 8}, {1, 4, 7}});
+        Matrix<Integer> halfRotatedMatrix = new ImmutableMatrix<>(new Integer[][]{{9, 8, 7}, {6, 5, 4}, {3, 2, 1}});
+        Matrix<Integer> rightRotatedMatrix = new ImmutableMatrix<>(new Integer[][]{{7, 4, 1}, {8, 5, 2}, {9, 6, 3}});
+
+        assertEquals(sourceMatrix, MatrixUtils.toRotated(sourceMatrix, Matrix.Rotation.NONE));
+        assertEquals(leftRotatedMatrix, MatrixUtils.toRotated(sourceMatrix, Matrix.Rotation.LEFT));
+        assertEquals(halfRotatedMatrix, MatrixUtils.toRotated(sourceMatrix, Matrix.Rotation.HALF));
+        assertEquals(rightRotatedMatrix, MatrixUtils.toRotated(sourceMatrix, Matrix.Rotation.RIGHT));
+    }
+
+    @Test
+    public void testToRotatedWhenNonSquare() {
+        Matrix<Character> sourceMatrix = new ImmutableMatrix<>(new Character[][]{{'a', 'b', 'c', 'd'}, {'e', 'f', 'g', 'h'}, {'i', 'j', 'k', 'l'}});
+        Matrix<Character> leftRotatedMatrix = new ImmutableMatrix<>(new Character[][]{{'d', 'h', 'l'}, {'c', 'g', 'k'}, {'b', 'f', 'j'}, {'a', 'e', 'i'}});
+        Matrix<Character> halfRotatedMatrix = new ImmutableMatrix<>(new Character[][]{{'l', 'k', 'j', 'i'}, {'h', 'g', 'f', 'e'}, {'d', 'c', 'b', 'a'}});
+        Matrix<Character> rightRotatedMatrix = new ImmutableMatrix<>(new Character[][]{{'i', 'e', 'a'}, {'j', 'f', 'b'}, {'k', 'g', 'c'}, {'l', 'h', 'd'}});
+
+        assertEquals(sourceMatrix, MatrixUtils.toRotated(sourceMatrix, Matrix.Rotation.NONE));
+        assertEquals(leftRotatedMatrix, MatrixUtils.toRotated(sourceMatrix, Matrix.Rotation.LEFT));
+        assertEquals(halfRotatedMatrix, MatrixUtils.toRotated(sourceMatrix, Matrix.Rotation.HALF));
+        assertEquals(rightRotatedMatrix, MatrixUtils.toRotated(sourceMatrix, Matrix.Rotation.RIGHT));
+    }
+
+    @Test
+    public void testToMirroredWhenSquare() {
+        Matrix<Integer> sourceMatrix = new ImmutableMatrix<>(new Integer[][]{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}});
+        Matrix<Integer> rowsMirrored = new ImmutableMatrix<>(new Integer[][]{{3, 2, 1}, {6, 5, 4}, {9, 8, 7}});
+        Matrix<Integer> columnsMirrored = new ImmutableMatrix<>(new Integer[][]{{7, 8, 9}, {4, 5, 6}, {1, 2, 3}});
+
+        assertEquals(rowsMirrored, MatrixUtils.toMirrored(sourceMatrix, Matrix.Axis.ROWS));
+        assertEquals(columnsMirrored, MatrixUtils.toMirrored(sourceMatrix, Matrix.Axis.COLUMNS));
+    }
+
+    @Test
+    public void testToMirroredWhenNonSquare() {
+        Matrix<Character> sourceMatrix = new ImmutableMatrix<>(new Character[][]{{'a', 'b', 'c', 'd'}, {'e', 'f', 'g', 'h'}, {'i', 'j', 'k', 'l'}});
+        Matrix<Character> rowsMirrored = new ImmutableMatrix<>(new Character[][]{{'d', 'c', 'b', 'a'}, {'h', 'g', 'f', 'e'}, {'l', 'k', 'j', 'i'}});
+        Matrix<Character> columnsMirrored = new ImmutableMatrix<>(new Character[][]{{'i', 'j', 'k', 'l'}, {'e', 'f', 'g', 'h'}, {'a', 'b', 'c', 'd'}});
+
+        assertEquals(rowsMirrored, MatrixUtils.toMirrored(sourceMatrix, Matrix.Axis.ROWS));
+        assertEquals(columnsMirrored, MatrixUtils.toMirrored(sourceMatrix, Matrix.Axis.COLUMNS));
+    }
 }

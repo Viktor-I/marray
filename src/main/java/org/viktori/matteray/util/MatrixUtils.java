@@ -49,4 +49,41 @@ public final class MatrixUtils {
         Objects.requireNonNull(mergeFunction);
         return new ImmutableMatrix<>(Math.min(matrix1.rows(), matrix2.rows()), Math.min(matrix1.columns(), matrix2.columns()), (r, c) -> mergeFunction.apply(matrix1.get(r, c), matrix2.get(r, c)));
     }
+
+    /**
+     * Returns a new immutable matrix containing all the elements in the specified matrix, but
+     * rotated based on the specified rotation.
+     *
+     * @param matrix matrix to rotate
+     * @param rotation {@link Matrix.Rotation Rotation} to apply
+     * @return a new matrix with the same elements, but rotated according to the specified rotation
+     * @see Matrix.Rotation
+     */
+    public static <E> Matrix<E> toRotated(Matrix<E> matrix, Matrix.Rotation rotation) {
+        int rows = matrix.rows();
+        int columns = matrix.columns();
+        return switch (rotation) {
+            case NONE -> new ImmutableMatrix<>(rows, columns, (r, c) -> matrix.get(r, c));
+            case LEFT -> new ImmutableMatrix<>(columns, rows, (r, c) -> matrix.get(c, columns - 1 - r));
+            case HALF -> new ImmutableMatrix<>(rows, columns, (r, c) -> matrix.get(rows - 1 - r, columns - 1 - c));
+            case RIGHT -> new ImmutableMatrix<>(columns, rows, (r, c) -> matrix.get(rows - 1 - c, r));
+        };
+    }
+
+    /**
+     * Returns a new immutable matrix containing all the elements in the specified matrix, but
+     * mirrored based on the specified mirroring axis.
+     *
+     * @param matrix matrix to mirror
+     * @param axis {@link Matrix.Axis Axis} to mirror over
+     * @return a new immutable matrix with the same elements, but mirrored on the specified axis
+     */
+    public static <E> Matrix<E> toMirrored(Matrix<E> matrix, Matrix.Axis axis) {
+        int rows = matrix.rows();
+        int columns = matrix.columns();
+        return switch (axis) {
+            case ROWS -> new ImmutableMatrix<>(rows, columns, (r, c) -> matrix.get(r, columns - 1 - c));
+            case COLUMNS -> new ImmutableMatrix<>(rows, columns, (r, c) -> matrix.get(rows - 1 - r, c));
+        };
+    }
 }

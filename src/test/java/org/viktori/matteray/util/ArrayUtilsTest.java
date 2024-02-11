@@ -1,10 +1,13 @@
 package org.viktori.matteray.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 import org.viktori.matteray.Array;
+
+import java.util.Comparator;
 
 public class ArrayUtilsTest {
 
@@ -57,5 +60,31 @@ public class ArrayUtilsTest {
         assertThrows(NullPointerException.class, () -> ArrayUtils.mergeForEach(null, array, (str1, str2) -> ""));
         assertThrows(NullPointerException.class, () -> ArrayUtils.mergeForEach(array, null, (str1, str2) -> ""));
         assertThrows(NullPointerException.class, () -> ArrayUtils.mergeForEach(array, array, null));
+    }
+
+    @Test
+    public void testToSorted() {
+        Array<String> array = Array.of("test", "of", "applyForEach");
+        assertEquals(Array.of("applyForEach", "of", "test"), ArrayUtils.toSorted(array));
+        assertEquals(Array.of("of", "test", "applyForEach"), ArrayUtils.toSorted(array, Comparator.comparing(String::length)));
+    }
+
+    @Test
+    public void testToSortedReturnsNewInstance() {
+        Array<String> array = Array.of("test", "of", "applyForEach");
+        assertNotSame(array, ArrayUtils.toSorted(array));
+        assertNotSame(array, ArrayUtils.toSorted(array, Comparator.comparing(String::length)));
+    }
+
+    @Test
+    public void testToReversed() {
+        Array<Integer> array = Array.of(1252, 292151, -24, 2, 262);
+        assertEquals(Array.of(262, 2, -24, 292151, 1252), ArrayUtils.toReversed(array));
+    }
+
+    @Test
+    public void testToReversedReturnsNewInstance() {
+        Array<Integer> array = Array.of(1252, 292151, -24, 2, 262);
+        assertNotSame(array, ArrayUtils.toReversed(array));
     }
 }
