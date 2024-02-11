@@ -39,6 +39,7 @@ jobs:
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
+        if: success() || failure() # run even if build fails
         with:
           name: Test results
           path: build/reports/tests
