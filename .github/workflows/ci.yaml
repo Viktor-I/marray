@@ -33,5 +33,5 @@ jobs:
         if: success() || failure() # run even if build fails
         with:
           check_name: 'Test report'
-          report_paths: '**/test-results/*.xml'
+          report_paths: '**/test-results/**/*.xml'
           require_tests: true
