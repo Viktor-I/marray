@@ -31,7 +31,7 @@ jobs:
 
       - name: Report JUnit results
         uses: mikepenz/action-junit-report@v4
-        if: success() || failure() # run even if build fails
+        if: success() || failure()
         with:
           check_name: 'Test report'
           report_paths: '**/test-results/**/*.xml'
@@ -39,7 +39,7 @@ jobs:
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
-        if: success() || failure() # run even if build fails
+        if: success() || failure()
         with:
-          name: Test results
+          name: test-report-${{ github.sha }}
           path: build/reports/tests
