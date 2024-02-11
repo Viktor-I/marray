@@ -88,8 +88,31 @@ public class ImmutableMatrix<E> implements Matrix<E>, Cloneable {
      * @param elementData the raw matrix of data to hold
      * @throws IllegalArgumentException if column count is not consistent across all rows
      */
-    public ImmutableMatrix(E[][] elementData) {
+    @SafeVarargs
+    public ImmutableMatrix(E[]... elementData) {
         this(elementData, false, getRows(elementData), validateAndGetColumns(elementData));
+    }
+
+    /**
+     * Constructs an immutable matrix containing the elements of the specified
+     * rows, in the order they are returned by the collection's iterators.
+     *
+     * @param elementRows the rows of element data to hold
+     * @throws IllegalArgumentException if column count is not consistent across all rows
+     */
+    @SafeVarargs
+    public ImmutableMatrix(Collection<E>... elementRows) {
+        this(Array.of(elementRows));
+    }
+
+    /**
+     * Constructs an empty immutable matrix.
+     */
+    public ImmutableMatrix() {
+        this.elementData = EMPTY_MATRIX;
+        this.columns = 0;
+        this.rows = 0;
+        this.totalSize = 0;
     }
 
     /**

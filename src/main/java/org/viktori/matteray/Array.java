@@ -251,7 +251,7 @@ public interface Array<E> extends Collection<E> {
      * @param e1 the first element
      * @param e2 the second element
      * @return an {@code Array} containing the specified elements
-     * @throws NullPointerException if the element is {@code null}
+     * @throws NullPointerException if an element is {@code null}
      */
     static <E> Array<E> of(E e1, E e2) {
         return new ImmutableArray<>(requireNonNull(e1, e2), true);
@@ -265,7 +265,7 @@ public interface Array<E> extends Collection<E> {
      * @param e2 the second element
      * @param e3 the third element
      * @return an {@code Array} containing the specified elements
-     * @throws NullPointerException if the element is {@code null}
+     * @throws NullPointerException if an element is {@code null}
      */
     static <E> Array<E> of(E e1, E e2, E e3) {
         return new ImmutableArray<>(requireNonNull(e1, e2, e3), true);
@@ -280,7 +280,7 @@ public interface Array<E> extends Collection<E> {
      * @param e3 the third element
      * @param e4 the fourth element
      * @return an {@code Array} containing the specified elements
-     * @throws NullPointerException if the element is {@code null}
+     * @throws NullPointerException if an element is {@code null}
      */
     static <E> Array<E> of(E e1, E e2, E e3, E e4) {
         return new ImmutableArray<>(requireNonNull(e1, e2, e3, e4), true);
@@ -296,7 +296,7 @@ public interface Array<E> extends Collection<E> {
      * @param e4 the fourth element
      * @param e5 the fifth element
      * @return an {@code Array} containing the specified elements
-     * @throws NullPointerException if the element is {@code null}
+     * @throws NullPointerException if an element is {@code null}
      */
     static <E> Array<E> of(E e1, E e2, E e3, E e4, E e5) {
         return new ImmutableArray<>(requireNonNull(e1, e2, e3, e4, e5), true);
@@ -331,11 +331,11 @@ public interface Array<E> extends Collection<E> {
      * Returns an immutable array containing the elements of
      * the given Collection, in its iteration order. The given Collection must not be null,
      * and it must not contain any null elements. If the given Collection is subsequently
-     * modified, the returned List will not reflect such modifications.
+     * modified, the returned Array will not reflect such modifications.
      *
      * @implNote
      * If the given Collection is an immutable array,
-     * calling copyOf will generally not create a copy.
+     * calling copyOf may return the same instance, as it is safe for reuse.
      *
      * @param <E> the {@code Array}'s element type
      * @param coll a {@code Collection} from which elements are drawn, must be non-null

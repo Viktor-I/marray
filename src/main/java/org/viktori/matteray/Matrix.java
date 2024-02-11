@@ -3,6 +3,7 @@ package org.viktori.matteray;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
 
@@ -117,15 +118,13 @@ public interface Matrix<E> extends Collection<E> {
      * allocate a new array even if this matrix is backed by an array).
      * The caller is thus free to modify the returned array.
      *
-     * @apiNote
-     * This method acts as a bridge between array-based and collection-based APIs.
+     * @return an array, whose {@linkplain Class#getComponentType runtime component
+     * type} is {@code Object}, containing all of the elements in this matrix
+     * @apiNote This method acts as a bridge between array-based and collection-based APIs.
      * It returns an array whose runtime type is {@code Object[]}.
      * Use {@link #toArray(Object[]) toArray(T[])} to reuse an existing
      * array, or use {@link #toArray(IntFunction)} to control the runtime type
      * of the array.
-     *
-     * @return an array, whose {@linkplain Class#getComponentType runtime component
-     * type} is {@code Object}, containing all of the elements in this matrix
      */
     Object[] toArray();
 
@@ -150,8 +149,16 @@ public interface Matrix<E> extends Collection<E> {
      * <p>Note that the returned array is not two-dimensional and will thus return all
      * elements in all rows. Use {@link #toArray2D(T[][])} for a two-dimensional array.</p>
      *
-     * @apiNote
-     * This method acts as a bridge between array-based and collection-based APIs.
+     * @param <T> the component type of the array to contain the matrix
+     * @param a   the array into which the elements of this matrix are to be
+     *            stored, if it is big enough; otherwise, a new array of the same
+     *            runtime type is allocated for this purpose.
+     * @return an array containing all of the elements in this matrix
+     * @throws ArrayStoreException  if the runtime type of any element in this
+     *                              matrix is not assignable to the {@linkplain Class#getComponentType
+     *                              runtime component type} of the specified array
+     * @throws NullPointerException if the specified array is null
+     * @apiNote This method acts as a bridge between array-based and collection-based APIs.
      * It allows an existing array to be reused under certain circumstances.
      * Use {@link #toArray()} to create an array whose runtime type is {@code Object[]},
      * or use {@link #toArray(IntFunction)} to control the runtime type of
@@ -172,16 +179,6 @@ public interface Matrix<E> extends Collection<E> {
      *
      * <p>Note that {@code toArray(new Object[0])} is identical in function to
      * {@code toArray()}.
-     *
-     * @param <T> the component type of the array to contain the matrix
-     * @param a the array into which the elements of this matrix are to be
-     *        stored, if it is big enough; otherwise, a new array of the same
-     *        runtime type is allocated for this purpose.
-     * @return an array containing all of the elements in this matrix
-     * @throws ArrayStoreException if the runtime type of any element in this
-     *         matrix is not assignable to the {@linkplain Class#getComponentType
-     *         runtime component type} of the specified array
-     * @throws NullPointerException if the specified array is null
      */
     <T> T[] toArray(T[] a);
 
@@ -196,8 +193,15 @@ public interface Matrix<E> extends Collection<E> {
      * <p>Note that the returned array is not two-dimensional and will thus return all
      * elements in all rows. Use {@link #toArray2D(IntFunction)} for a two-dimensional array.</p>
      *
-     * @apiNote
-     * This method acts as a bridge between array-based and collection-based APIs.
+     * @param <T>       the component type of the array to contain the collection
+     * @param generator a function which produces a new array of the desired
+     *                  type and the provided length
+     * @return an array containing all of the elements in this collection
+     * @throws ArrayStoreException  if the runtime type of any element in this
+     *                              matrix is not assignable to the {@linkplain Class#getComponentType
+     *                              runtime component type} of the generated array
+     * @throws NullPointerException if the generator function is null
+     * @apiNote This method acts as a bridge between array-based and collection-based APIs.
      * It allows creation of an array of a particular runtime type. Use
      * {@link #toArray()} to create an array whose runtime type is {@code Object[]},
      * or use {@link #toArray(Object[]) toArray(T[])} to reuse an existing array.
@@ -208,19 +212,8 @@ public interface Matrix<E> extends Collection<E> {
      *
      * <pre>
      *     String[] y = x.toArray(String[]::new);</pre>
-     *
-     * @implSpec
-     * The default implementation calls the generator function with zero
+     * @implSpec The default implementation calls the generator function with zero
      * and then passes the resulting array to {@link #toArray(Object[]) toArray(T[])}.
-     *
-     * @param <T> the component type of the array to contain the collection
-     * @param generator a function which produces a new array of the desired
-     *                  type and the provided length
-     * @return an array containing all of the elements in this collection
-     * @throws ArrayStoreException if the runtime type of any element in this
-     *         matrix is not assignable to the {@linkplain Class#getComponentType
-     *         runtime component type} of the generated array
-     * @throws NullPointerException if the generator function is null
      */
     default <T> T[] toArray(IntFunction<T[]> generator) {
         return toArray(generator.apply(0));
@@ -272,13 +265,13 @@ public interface Matrix<E> extends Collection<E> {
      * {@code toArray2D()}.
      *
      * @param <T> the component type of the two-dimensional array to contain the matrix
-     * @param a the two-dimensional array into which the elements of this matrix are to be
-     *        stored, if it is big enough; otherwise, a new two-dimensional array of the same
-     *        runtime type is allocated for this purpose.
+     * @param a   the two-dimensional array into which the elements of this matrix are to be
+     *            stored, if it is big enough; otherwise, a new two-dimensional array of the same
+     *            runtime type is allocated for this purpose.
      * @return a row-based array with column-arrays inside containing all of the elements in this matrix
-     * @throws ArrayStoreException if the runtime type of any element in this
-     *         matrix is not assignable to the {@linkplain Class#getComponentType
-     *         runtime component type} of the specified array
+     * @throws ArrayStoreException  if the runtime type of any element in this
+     *                              matrix is not assignable to the {@linkplain Class#getComponentType
+     *                              runtime component type} of the specified array
      * @throws NullPointerException if the specified array is null
      */
     <T> T[][] toArray2D(T[][] a);
@@ -299,18 +292,16 @@ public interface Matrix<E> extends Collection<E> {
      * <pre>
      *     String[][] y = x.toArray2D(String[][]::new);</pre>
      *
-     * @implSpec
-     * The default implementation calls the generator function with zero
-     * and then passes the resulting array to {@link #toArray2D(Object[][]) toArray2D(T[][])}.
-     *
-     * @param <T> the component type of the array to contain the matrix
+     * @param <T>       the component type of the array to contain the matrix
      * @param generator a function which produces a new array of the desired
      *                  type and the provided length
      * @return an array containing all of the elements in this matrix
-     * @throws ArrayStoreException if the runtime type of any element in this
-     *         matrix is not assignable to the {@linkplain Class#getComponentType
-     *         runtime component type} of the generated array
+     * @throws ArrayStoreException  if the runtime type of any element in this
+     *                              matrix is not assignable to the {@linkplain Class#getComponentType
+     *                              runtime component type} of the generated array
      * @throws NullPointerException if the generator function is null
+     * @implSpec The default implementation calls the generator function with zero
+     * and then passes the resulting array to {@link #toArray2D(Object[][]) toArray2D(T[][])}.
      */
     default <T> T[][] toArray2D(IntFunction<T[][]> generator) {
         return toArray2D(generator.apply(0));
@@ -444,6 +435,142 @@ public interface Matrix<E> extends Collection<E> {
     }
 
     /**
+     * Returns an immutable matrix containing zero elements.
+     *
+     * @param <E> the {@code Matrix}'s element type
+     * @return an empty {@code Matrix}
+     */
+    static <E> Matrix<E> of() {
+        return new ImmutableMatrix<>();
+    }
+
+    /**
+     * Returns an immutable matrix containing one row of non-null elements.
+     *
+     * @param <E>  the {@code Matrix}'s element type
+     * @param row1 the single row of elements
+     * @return a {@code Matrix} containing the specified element
+     * @throws NullPointerException if the row or an element is {@code null}
+     */
+    static <E> Matrix<E> of(Array<E> row1) {
+        return new ImmutableMatrix<>(requireNonNull(row1));
+    }
+
+    /**
+     * Returns an immutable matrix containing two rows of non-null elements.
+     *
+     * @param <E>  the {@code Matrix}'s element type
+     * @param row1 the first row of elements
+     * @param row2 the second row of elements
+     * @return a {@code Matrix} containing the specified elements
+     * @throws NullPointerException     if a row or an element is {@code null}
+     * @throws IllegalArgumentException if the rows are of different size
+     */
+    static <E> Matrix<E> of(Array<E> row1, Array<E> row2) {
+        return new ImmutableMatrix<>(requireNonNull(row1, row2));
+    }
+
+    /**
+     * Returns an immutable matrix containing three non-null elements.
+     *
+     * @param <E>  the {@code Matrix}'s element type
+     * @param row1 the first row of elements
+     * @param row2 the second row of elements
+     * @param row3 the third row elements
+     * @return a {@code Matrix} containing the specified elements
+     * @throws NullPointerException     if a row or an element is {@code null}
+     * @throws IllegalArgumentException if the rows are of different size
+     */
+    static <E> Matrix<E> of(Array<E> row1, Array<E> row2, Array<E> row3) {
+        return new ImmutableMatrix<>(requireNonNull(row1, row2, row3));
+    }
+
+    /**
+     * Returns an immutable matrix containing four non-null elements.
+     *
+     * @param <E>  the {@code Matrix}'s element type
+     * @param row1 the first row of elements
+     * @param row2 the second row of elements
+     * @param row3 the third row of elements
+     * @param row4 the fourth row of elements
+     * @return a {@code Matrix} containing the specified elements
+     * @throws NullPointerException     if a row or an element is {@code null}
+     * @throws IllegalArgumentException if the rows are of different size
+     */
+    static <E> Matrix<E> of(Array<E> row1, Array<E> row2, Array<E> row3, Array<E> row4) {
+        return new ImmutableMatrix<>(requireNonNull(row1, row2, row3, row4));
+    }
+
+    /**
+     * Returns an immutable matrix containing five non-null elements.
+     *
+     * @param <E>  the {@code Matrix}'s element type
+     * @param row1 the first row of elements
+     * @param row2 the second row of elements
+     * @param row3 the third row of elements
+     * @param row4 the fourth row of elements
+     * @param row5 the fifth row of elements
+     * @return an {@code Matrix} containing the specified elements
+     * @throws NullPointerException     if a row or an element is {@code null}
+     * @throws IllegalArgumentException if the rows are of different size
+     */
+    static <E> Matrix<E> of(Array<E> row1, Array<E> row2, Array<E> row3, Array<E> row4, Array<E> row5) {
+        return new ImmutableMatrix<>(requireNonNull(row1, row2, row3, row4, row5));
+    }
+
+    /**
+     * Returns an immutable matrix containing an arbitrary number of rows of non-null elements.
+     *
+     * @param <E>  the {@code Matrix}'s element type
+     * @param rows the rows of elements to be contained in the matrix
+     * @return an {@code Matrix} containing the specified elements
+     * @throws NullPointerException     if a row or an element is {@code null}
+     * @throws IllegalArgumentException if the rows are of different size
+     */
+    @SafeVarargs
+    static <E> Matrix<E> of(Array<E>... rows) {
+        return new ImmutableMatrix<>(requireNonNull(rows));
+    }
+
+    /**
+     * Returns an immutable matrix containing the elements of
+     * the given matrix, in its iteration order. The given Collection must not be null,
+     * and it must not contain any null elements. If the given Collection is subsequently
+     * modified, the returned Matrix will not reflect such modifications.
+     *
+     * @implNote If the given Matrix is an immutable matrix,
+     * calling copyOf may return the same instance, as it is safe for reuse.
+     *
+     * @param <E>    the {@code Matrix}'s element type
+     * @param matrix a {@code Matrix} from which elements are drawn, must be non-null
+     * @return an {@code Matrix} containing the elements of the given {@code Matrix}
+     * @throws NullPointerException if matrix is null, or if it contains any nulls
+     */
+    static <E> Matrix<E> copyOf(Matrix<E> matrix) {
+        if (matrix instanceof ImmutableMatrix<E> ia) {
+            return requireNonNull(ia);
+        }
+        return new ImmutableMatrix<>(requireNonNull(matrix));
+    }
+
+    @SafeVarargs
+    @SuppressWarnings("unchecked")
+    private static <E> Array<E>[] requireNonNull(Array<E>... elementRows) {
+        for (Array<?> row : Objects.requireNonNull(elementRows)) {
+            requireNonNull((Collection<E>) row);
+        }
+        return elementRows;
+    }
+
+    private static <C extends Collection<E>, E> C requireNonNull(C coll) {
+        Objects.requireNonNull(coll);
+        for (Object e : coll) {
+            Objects.requireNonNull(e);
+        }
+        return coll;
+    }
+
+    /**
      * Matrix rotation.
      * <p>
      * Following options exist:
@@ -545,6 +672,7 @@ public interface Matrix<E> extends Collection<E> {
         private final Matrix<E> matrix;
         int row = 0;
         int column = 0;
+
         MatrixIterator(final Matrix<E> matrix) {
             this.matrix = matrix;
         }

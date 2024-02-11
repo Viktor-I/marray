@@ -112,7 +112,7 @@ public class ArrayTest {
     }
 
     @Test
-    public void testOfCopyOfThreeElementsInArray() {
+    public void testCopyOfThreeElementsInArray() {
         Array<Character> copy = Array.copyOf(Array.of('a', 'b', 'c'));
         assertEquals(3, copy.size());
         assertEquals('a', copy.get(0));
@@ -121,12 +121,12 @@ public class ArrayTest {
     }
 
     @Test
-    public void testOfCopyOfThreeElementsInArrayContainingNulls() {
+    public void testCopyOfThreeElementsInArrayContainingNulls() {
         assertThrowsExactly(NullPointerException.class, () -> Array.copyOf(new ImmutableArray<>(null, 'b', null)));
     }
 
     @Test
-    public void testOfCopyOfThreeElementsInList() {
+    public void testCopyOfThreeElementsInList() {
         Array<Character> copy = Array.copyOf(List.of('a', 'b', 'c'));
         assertEquals(3, copy.size());
         assertEquals('a', copy.get(0));
@@ -135,7 +135,7 @@ public class ArrayTest {
     }
 
     @Test
-    public void testOfCopyOfThreeElementsInListContainingNulls() {
+    public void testCopyOfThreeElementsInListContainingNulls() {
         assertThrowsExactly(NullPointerException.class, () -> Array.copyOf(Arrays.asList(null, 'b', null)));
     }
 }

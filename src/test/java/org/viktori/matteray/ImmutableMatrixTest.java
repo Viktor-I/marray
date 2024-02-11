@@ -32,6 +32,20 @@ public class ImmutableMatrixTest {
     }
 
     @Test
+    public void test2DArrayConstructorWithVarargs() {
+        Matrix<String> matrix = new ImmutableMatrix<>(new String[]{"xx", "xy"}, new String[]{"yx", "yy"});
+        assertEquals(2, matrix.rows());
+        assertEquals(2, matrix.columns());
+        assertEquals(4, matrix.size());
+        assertEquals("xx", matrix.get(0, 0));
+        assertEquals("xy", matrix.get(0, 1));
+        assertEquals("yx", matrix.get(1, 0));
+        assertEquals("yy", matrix.get(1, 1));
+        assertThrowsExactly(ArrayIndexOutOfBoundsException.class, () -> matrix.get(2, 0));
+        assertThrowsExactly(ArrayIndexOutOfBoundsException.class, () -> matrix.get(0, 2));
+    }
+
+    @Test
     public void test2DArrayConstructorWhenEmpty() {
         Matrix<String> matrix = new ImmutableMatrix<>(new String[][]{});
         assertEquals(0, matrix.rows());
@@ -43,6 +57,38 @@ public class ImmutableMatrixTest {
     @Test
     public void test2DArrayConstructorWhenEmptyWithEmptyRows() {
         Matrix<String> matrix = new ImmutableMatrix<>(new String[][]{{}, {}});
+        assertEquals(0, matrix.rows());
+        assertEquals(0, matrix.columns());
+        assertEquals(0, matrix.size());
+        assertThrowsExactly(ArrayIndexOutOfBoundsException.class, () -> matrix.get(0, 0));
+    }
+
+    @Test
+    public void testCollectionVarargsConstructor() {
+        Matrix<String> matrix = new ImmutableMatrix<>(Array.of("xx", "xy"), Array.of("yx", "yy"));
+        assertEquals(2, matrix.rows());
+        assertEquals(2, matrix.columns());
+        assertEquals(4, matrix.size());
+        assertEquals("xx", matrix.get(0, 0));
+        assertEquals("xy", matrix.get(0, 1));
+        assertEquals("yx", matrix.get(1, 0));
+        assertEquals("yy", matrix.get(1, 1));
+        assertThrowsExactly(ArrayIndexOutOfBoundsException.class, () -> matrix.get(2, 0));
+        assertThrowsExactly(ArrayIndexOutOfBoundsException.class, () -> matrix.get(0, 2));
+    }
+
+    @Test
+    public void testCollectionVarargsConstructorWhenEmpty() {
+        Matrix<String> matrix = new ImmutableMatrix<>();
+        assertEquals(0, matrix.rows());
+        assertEquals(0, matrix.columns());
+        assertEquals(0, matrix.size());
+        assertThrowsExactly(ArrayIndexOutOfBoundsException.class, () -> matrix.get(0, 0));
+    }
+
+    @Test
+    public void testCollectionVarargsConstructorWhenEmptyWithEmptyRows() {
+        Matrix<String> matrix = new ImmutableMatrix<>(Array.of(), Array.of(), Array.of());
         assertEquals(0, matrix.rows());
         assertEquals(0, matrix.columns());
         assertEquals(0, matrix.size());
@@ -104,7 +150,7 @@ public class ImmutableMatrixTest {
     }
 
     @Test
-    public void testCollectionConstructor() {
+    public void testCollectionOfCollectionConstructor() {
         List<List<String>> values = List.of(List.of("xx", "xy"), List.of("yx", "yy"));
         Matrix<String> matrix = new ImmutableMatrix<>(values);
         assertEquals(2, matrix.rows());
@@ -119,7 +165,7 @@ public class ImmutableMatrixTest {
     }
 
     @Test
-    public void testCollectionConstructorWhenEmpty() {
+    public void testCollectionOfCollectionConstructorWhenEmpty() {
         List<List<String>> values = List.of(List.of());
         Matrix<String> matrix = new ImmutableMatrix<>(values);
         assertEquals(0, matrix.rows());
