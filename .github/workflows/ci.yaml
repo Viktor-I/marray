@@ -16,22 +16,10 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Cache Gradle packages
-        uses: actions/cache@v3
+      - name: Run Gradle tasks with Gradle Build action
+        uses: gradle/gradle-build-action@v3
         with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Give Gradle execute permission
-        uses: actions/chmod@v2
-        with:
-          files: './gradlew'
-          mode: '+x'
-
-      - name: Run Gradle tasks
-        run: ./gradlew clean test
+          inputs: ./gradlew clean test
 
       - name: Upload test results (optional)
         uses: actions/upload-artifact@v3
