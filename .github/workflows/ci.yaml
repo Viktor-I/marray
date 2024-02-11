@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ * ]  # Any branch for now
+    branches: '**'  # Any branch
 
 jobs:
   build-and-test:
