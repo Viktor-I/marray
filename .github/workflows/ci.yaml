@@ -8,11 +8,12 @@ permissions:
   pull-requests: write
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -27,8 +28,10 @@ jobs:
       - name: Build project
         run: ./gradlew build
 
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
+      - name: Report JUnit results
+        uses: nmgr/actions-junit-reporter@v3
+        if: success() || failure() # run even if build fails
         with:
-          name: Test results
-          path: build/reports/tests
+          checkName: 'Test results'
+          reportPath: build/reports/tests/*.xml
+          failOnSkipped: false
