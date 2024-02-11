@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [ * ]  # Any branch for now
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-22.04  # Latest LTS version as of feb 2024
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Run Gradle tasks
+        run: ./gradlew clean test
+
+      - name: Upload test results (optional)
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: build/reports/tests
