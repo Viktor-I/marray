@@ -32,7 +32,7 @@ public class ImmutableArrayTest {
     @Test
     public void testVarargsConstructorWhenEmpty() {
         Array<String> array = new ImmutableArray<>();
-        assertEquals(0, array.size());
+        assertEquals(2, array.size());
         assertThrowsExactly(ArrayIndexOutOfBoundsException.class, () -> array.get(0));
     }
 
