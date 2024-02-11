@@ -18,8 +18,9 @@ jobs:
 
       - name: Run Gradle tasks with Gradle Build action
         uses: gradle/gradle-build-action@v3
-        with:
-          inputs: ./gradlew clean build
+
+      - name: Build project
+        run: ./gradlew clean build
 
       - name: Upload test results (optional)
         uses: actions/upload-artifact@v3
