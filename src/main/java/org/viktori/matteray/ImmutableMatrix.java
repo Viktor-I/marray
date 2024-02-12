@@ -53,7 +53,7 @@ public class ImmutableMatrix<E> implements Matrix<E>, Cloneable {
     }
 
     /**
-     * Constructs an immutable square matrix with the specified length (width and height), and function
+     * Constructs an immutable matrix with the specified length (width and height), and function
      * to populate values with. When given explicit rows and columns like this, it is allowed to
      * create a matrix with multiple rows and zero columns, or vice versa.
      *

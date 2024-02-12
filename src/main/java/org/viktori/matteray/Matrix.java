@@ -1,5 +1,7 @@
 package org.viktori.matteray;
 
+import org.viktori.matteray.function.MatrixIndexFunction;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -530,6 +532,36 @@ public interface Matrix<E> extends Collection<E> {
     @SafeVarargs
     static <E> Matrix<E> of(Array<E>... rows) {
         return new ImmutableMatrix<>(requireNonNull(rows));
+    }
+
+    /**
+     * Returns an immutable square matrix with the specified length (width and height), and function
+     * to populate values with.
+     *
+     * @param length       the row and column count the matrix (i.e its height and width)
+     * @param initFunction the function to initialize values in the matrix
+     * @throws NullPointerException     if an element is {@code null} or if the initFunction is {@code null}
+     * @throws IllegalArgumentException if the specified initial capacity
+     *                                  is negative
+     */
+    static <E> Matrix<E> of(int length, MatrixIndexFunction<E> initFunction) {
+        return requireNonNull(new ImmutableMatrix<>(length, initFunction));
+    }
+
+    /**
+     * Returns an immutable matrix with the specified length (width and height), and function
+     * to populate values with. When given explicit rows and columns like this, it is allowed to
+     * create a matrix with multiple rows and zero columns, or vice versa.
+     *
+     * @param rows         row count in the matrix (i.e. its height)
+     * @param columns      column count in the matrix (i.e. its width)
+     * @param initFunction the function to initialize values in the matrix
+     * @throws NullPointerException     if an element is {@code null} or if the initFunction is {@code null}
+     * @throws IllegalArgumentException if the specified initial capacity
+     *                                  is negative
+     */
+    static <E> Matrix<E> of(int rows, int columns, MatrixIndexFunction<E> initFunction) {
+        return requireNonNull(new ImmutableMatrix<>(rows, columns, initFunction));
     }
 
     /**

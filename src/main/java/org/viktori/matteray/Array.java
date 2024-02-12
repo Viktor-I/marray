@@ -1,5 +1,7 @@
 package org.viktori.matteray;
 
+import org.viktori.matteray.function.ArrayIndexFunction;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -236,7 +238,7 @@ public interface Array<E> extends Collection<E> {
      * Returns an immutable array containing one non-null element.
      *
      * @param <E> the {@code Array}'s element type
-     * @param e1 the single element
+     * @param e1  the single element
      * @return an {@code Array} containing the specified element
      * @throws NullPointerException if the element is {@code null}
      */
@@ -248,8 +250,8 @@ public interface Array<E> extends Collection<E> {
      * Returns an immutable array containing two non-null elements.
      *
      * @param <E> the {@code Array}'s element type
-     * @param e1 the first element
-     * @param e2 the second element
+     * @param e1  the first element
+     * @param e2  the second element
      * @return an {@code Array} containing the specified elements
      * @throws NullPointerException if an element is {@code null}
      */
@@ -261,9 +263,9 @@ public interface Array<E> extends Collection<E> {
      * Returns an immutable array containing three non-null elements.
      *
      * @param <E> the {@code Array}'s element type
-     * @param e1 the first element
-     * @param e2 the second element
-     * @param e3 the third element
+     * @param e1  the first element
+     * @param e2  the second element
+     * @param e3  the third element
      * @return an {@code Array} containing the specified elements
      * @throws NullPointerException if an element is {@code null}
      */
@@ -275,10 +277,10 @@ public interface Array<E> extends Collection<E> {
      * Returns an immutable array containing four non-null elements.
      *
      * @param <E> the {@code Array}'s element type
-     * @param e1 the first element
-     * @param e2 the second element
-     * @param e3 the third element
-     * @param e4 the fourth element
+     * @param e1  the first element
+     * @param e2  the second element
+     * @param e3  the third element
+     * @param e4  the fourth element
      * @return an {@code Array} containing the specified elements
      * @throws NullPointerException if an element is {@code null}
      */
@@ -290,11 +292,11 @@ public interface Array<E> extends Collection<E> {
      * Returns an immutable array containing five non-null elements.
      *
      * @param <E> the {@code Array}'s element type
-     * @param e1 the first element
-     * @param e2 the second element
-     * @param e3 the third element
-     * @param e4 the fourth element
-     * @param e5 the fifth element
+     * @param e1  the first element
+     * @param e2  the second element
+     * @param e3  the third element
+     * @param e4  the fourth element
+     * @param e5  the fifth element
      * @return an {@code Array} containing the specified elements
      * @throws NullPointerException if an element is {@code null}
      */
@@ -328,19 +330,31 @@ public interface Array<E> extends Collection<E> {
     }
 
     /**
+     * Returns an immutable array with the specified length, and function
+     * to populate values with.
+     *
+     * @param length       the length of the array
+     * @param initFunction the function to initialize values in the array
+     * @throws NullPointerException     if an element is {@code null} or if the initFunction is {@code null}
+     * @throws IllegalArgumentException if the specified initial capacity
+     *                                  is negative
+     */
+    static <E> Array<E> of(int length, ArrayIndexFunction<E> initFunction) {
+        return requireNonNull(new ImmutableArray<>(length, initFunction));
+    }
+
+    /**
      * Returns an immutable array containing the elements of
      * the given Collection, in its iteration order. The given Collection must not be null,
      * and it must not contain any null elements. If the given Collection is subsequently
      * modified, the returned Array will not reflect such modifications.
      *
-     * @implNote
-     * If the given Collection is an immutable array,
-     * calling copyOf may return the same instance, as it is safe for reuse.
-     *
-     * @param <E> the {@code Array}'s element type
+     * @param <E>  the {@code Array}'s element type
      * @param coll a {@code Collection} from which elements are drawn, must be non-null
      * @return an {@code Array} containing the elements of the given {@code Collection}
      * @throws NullPointerException if coll is null, or if it contains any nulls
+     * @implNote If the given Collection is an immutable array,
+     * calling copyOf may return the same instance, as it is safe for reuse.
      */
     static <E> Array<E> copyOf(Collection<E> coll) {
         if (coll instanceof ImmutableArray<E> ia) {
@@ -350,7 +364,7 @@ public interface Array<E> extends Collection<E> {
     }
 
     private static Object[] requireNonNull(Object... elements) {
-        for (Object e: elements) {
+        for (Object e : elements) {
             Objects.requireNonNull(e);
         }
         return elements;
@@ -358,7 +372,7 @@ public interface Array<E> extends Collection<E> {
 
     private static <C extends Collection<?>> C requireNonNull(C coll) {
         Objects.requireNonNull(coll);
-        for (Object e: coll) {
+        for (Object e : coll) {
             Objects.requireNonNull(e);
         }
         return coll;

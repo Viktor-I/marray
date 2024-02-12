@@ -112,6 +112,29 @@ public class ArrayTest {
     }
 
     @Test
+    public void testOfWithInitFunction() {
+        Array<Character> array = Array.of(10,
+                i -> (char) ((int) 'm' + i));
+        assertEquals(10, array.size());
+        assertEquals('m', array.get(0));
+        assertEquals('n', array.get(1));
+        assertEquals('o', array.get(2));
+        assertEquals('p', array.get(3));
+        assertEquals('q', array.get(4));
+        assertEquals('r', array.get(5));
+        assertEquals('s', array.get(6));
+        assertEquals('t', array.get(7));
+        assertEquals('u', array.get(8));
+        assertEquals('v', array.get(9));
+    }
+
+    @Test
+    public void testOfWithInitFunctionWhereSomeAreNull() {
+        assertThrowsExactly(NullPointerException.class, () -> Array.of(10,
+                i -> i % 2 == 0 ? null : (char) ((int) 'm' + i)));
+    }
+
+    @Test
     public void testCopyOfThreeElementsInArray() {
         Array<Character> copy = Array.copyOf(Array.of('a', 'b', 'c'));
         assertEquals(3, copy.size());

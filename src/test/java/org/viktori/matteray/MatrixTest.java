@@ -197,10 +197,61 @@ public class MatrixTest {
     @Test
     public void testOfArbitraryNumberOfRowsWhereColumnsAreOfDifferentSize() {
         assertThrowsExactly(IllegalArgumentException.class, () -> Matrix.of(Array.of('a', 'b'),
-                Array.of('c','d','e'), Array.of('f'),
+                Array.of('c', 'd', 'e'), Array.of('f'),
                 Array.of('g', 'h', 'i', 'j'), Array.of('k', 'l'),
                 Array.of('m', 'n', 'o'), Array.of('p', 'q'),
                 Array.of('s', 't'), Array.of('v', 'w', 'x', 'y', 'z')));
+    }
+
+    @Test
+    public void testOfWithSquareInitFunction() {
+        Matrix<Integer> matrix = Matrix.of(3,
+                (r, c) -> (r + 1) * (int) Math.pow(10, c));
+        assertEquals(3, matrix.rows());
+        assertEquals(3, matrix.columns());
+        assertEquals(9, matrix.size());
+        assertEquals(1, matrix.get(0, 0));
+        assertEquals(10, matrix.get(0, 1));
+        assertEquals(100, matrix.get(0, 2));
+        assertEquals(2, matrix.get(1, 0));
+        assertEquals(20, matrix.get(1, 1));
+        assertEquals(200, matrix.get(1, 2));
+        assertEquals(3, matrix.get(2, 0));
+        assertEquals(30, matrix.get(2, 1));
+        assertEquals(300, matrix.get(2, 2));
+    }
+
+    @Test
+    public void testOfWithSquareInitFunctionWhereSomeAreNull() {
+        assertThrowsExactly(NullPointerException.class, () -> Matrix.of(3, 3,
+                (r, c) -> c % 2 == 0 && r % 2 == 0 ? null : (r + 1) * (int) Math.pow(10, c)));
+    }
+
+    @Test
+    public void testOfWithInitFunction() {
+        Matrix<Integer> matrix = Matrix.of(4, 3,
+                (r, c) -> (r + 1) * (int) Math.pow(10, c));
+        assertEquals(4, matrix.rows());
+        assertEquals(3, matrix.columns());
+        assertEquals(12, matrix.size());
+        assertEquals(1, matrix.get(0, 0));
+        assertEquals(10, matrix.get(0, 1));
+        assertEquals(100, matrix.get(0, 2));
+        assertEquals(2, matrix.get(1, 0));
+        assertEquals(20, matrix.get(1, 1));
+        assertEquals(200, matrix.get(1, 2));
+        assertEquals(3, matrix.get(2, 0));
+        assertEquals(30, matrix.get(2, 1));
+        assertEquals(300, matrix.get(2, 2));
+        assertEquals(4, matrix.get(3, 0));
+        assertEquals(40, matrix.get(3, 1));
+        assertEquals(400, matrix.get(3, 2));
+    }
+
+    @Test
+    public void testOfWithInitFunctionWhereSomeAreNull() {
+        assertThrowsExactly(NullPointerException.class, () -> Matrix.of(4, 3,
+                (r, c) -> c % 2 == 0 && r % 2 == 0 ? null : (r + 1) * (int) Math.pow(10, c)));
     }
 
     @Test
