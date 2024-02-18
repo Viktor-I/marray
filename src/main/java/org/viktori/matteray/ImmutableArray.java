@@ -242,7 +242,7 @@ public class ImmutableArray<E> implements Array<E>, Cloneable {
     @Override
     @SuppressWarnings("unchecked")
     public List<E> toList() {
-        return List.of((E[]) elementData);
+        return Arrays.asList((E[]) elementData);
     }
 
     @Override

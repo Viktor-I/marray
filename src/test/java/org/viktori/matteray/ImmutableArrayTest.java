@@ -277,6 +277,13 @@ public class ImmutableArrayTest {
     }
 
     @Test
+    public void testToListWithNulls() {
+        Array<String> array = new ImmutableArray<>("abc", null, "def", null, "ghi");
+
+        assertEquals(Arrays.asList("abc", null, "def", null, "ghi"), array.toList());
+    }
+
+    @Test
     public void testToArray() {
         Array<String> array = new ImmutableArray<>("abc", "def", "ghi");
 
@@ -284,6 +291,16 @@ public class ImmutableArrayTest {
         assertArrayEquals(new String[]{"abc", "def", "ghi"}, array.toArray(new String[0]));
         assertArrayEquals(new String[]{"abc", "def", "ghi"}, array.toArray(new String[array.size()]));
         assertArrayEquals(new String[]{"abc", "def", "ghi"}, array.toArray(String[]::new));
+    }
+
+    @Test
+    public void testToArrayWithNulls() {
+        Array<String> array = new ImmutableArray<>("abc", null, "def", null, "ghi");
+
+        assertArrayEquals(new Object[]{"abc", null, "def", null, "ghi"}, array.toArray());
+        assertArrayEquals(new String[]{"abc", null, "def", null, "ghi"}, array.toArray(new String[0]));
+        assertArrayEquals(new String[]{"abc", null, "def", null, "ghi"}, array.toArray(new String[array.size()]));
+        assertArrayEquals(new String[]{"abc", null, "def", null, "ghi"}, array.toArray(String[]::new));
     }
 
     @Test
