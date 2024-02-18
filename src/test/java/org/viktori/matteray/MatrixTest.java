@@ -204,6 +204,38 @@ public class MatrixTest {
     }
 
     @Test
+    public void testFromRowThreeColumns() {
+        Matrix<Character> matrix = Matrix.fromRow(Array.of('a', 'b', 'c'));
+        assertEquals(1, matrix.rows());
+        assertEquals(3, matrix.columns());
+        assertEquals(3, matrix.size());
+        assertEquals('a', matrix.get(0, 0));
+        assertEquals('b', matrix.get(0, 1));
+        assertEquals('c', matrix.get(0, 2));
+    }
+
+    @Test
+    public void testFromRowThreeColumnsWhereOneElementIsNull() {
+        assertThrowsExactly(NullPointerException.class, () -> Matrix.fromRow(Array.of(null, 'a', 'b', 'c')));
+    }
+
+    @Test
+    public void testFromColumnThreeRows() {
+        Matrix<Character> matrix = Matrix.fromColumn(Array.of('a', 'b', 'c'));
+        assertEquals(3, matrix.rows());
+        assertEquals(1, matrix.columns());
+        assertEquals(3, matrix.size());
+        assertEquals('a', matrix.get(0, 0));
+        assertEquals('b', matrix.get(1, 0));
+        assertEquals('c', matrix.get(2, 0));
+    }
+
+    @Test
+    public void testFromColumnThreeRowsWhereOneElementIsNull() {
+        assertThrowsExactly(NullPointerException.class, () -> Matrix.fromColumn(Array.of('a', 'b', 'c', null)));
+    }
+
+    @Test
     public void testOfWithSquareInitFunction() {
         Matrix<Integer> matrix = Matrix.of(3,
                 (r, c) -> (r + 1) * (int) Math.pow(10, c));

@@ -550,8 +550,7 @@ public interface Matrix<E> extends Collection<E> {
      * @param length       the row and column count the matrix (i.e its height and width)
      * @param initFunction the function to initialize values in the matrix
      * @throws NullPointerException     if an element is {@code null} or if the initFunction is {@code null}
-     * @throws IllegalArgumentException if the specified initial capacity
-     *                                  is negative
+     * @throws IllegalArgumentException if the specified length is negative
      */
     static <E> Matrix<E> of(int length, MatrixIndexFunction<E> initFunction) {
         return requireNonNull(new ImmutableMatrix<>(length, initFunction));
@@ -566,11 +565,30 @@ public interface Matrix<E> extends Collection<E> {
      * @param columns      column count in the matrix (i.e. its width)
      * @param initFunction the function to initialize values in the matrix
      * @throws NullPointerException     if an element is {@code null} or if the initFunction is {@code null}
-     * @throws IllegalArgumentException if the specified initial capacity
-     *                                  is negative
+     * @throws IllegalArgumentException if the specified rows, or specified columns is negative
      */
     static <E> Matrix<E> of(int rows, int columns, MatrixIndexFunction<E> initFunction) {
         return requireNonNull(new ImmutableMatrix<>(rows, columns, initFunction));
+    }
+
+    /**
+     * Returns an immutable matrix with a single row.
+     *
+     * @param rowArray array to get row values from
+     * @throws NullPointerException if an element is {@code null}
+     */
+    static <E> Matrix<E> fromRow(Array<E> rowArray) {
+        return of(1, rowArray.size(), (r, c) -> rowArray.get(c));
+    }
+
+    /**
+     * Returns an immutable matrix with a single column.
+     *
+     * @param columnArray array to get column values from
+     * @throws NullPointerException if an element is {@code null}
+     */
+    static <E> Matrix<E> fromColumn(Array<E> columnArray) {
+        return of(columnArray.size(), 1, (r, c) -> columnArray.get(r));
     }
 
     /**
