@@ -309,6 +309,15 @@ public interface Matrix<E> extends Collection<E> {
         return toArray2D(generator.apply(0));
     }
 
+    /**
+     * Returns an iterator over the elements in this matrix. The elements are
+     * returned ordered by row index first, then column index for each row.
+     * I.e. it finishes one row before it continues with the next one.
+     *
+     * @return an {@code Iterator} over the elements in this matrix
+     */
+    Iterator<E> iterator();
+
     // Comparison and hashing
 
     /**

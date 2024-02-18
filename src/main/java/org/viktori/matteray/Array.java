@@ -100,6 +100,14 @@ public interface Array<E> extends Collection<E> {
      */
     List<E> toList();
 
+    /**
+     * Returns an iterator over the elements in this array. The elements are
+     * returned in index order.
+     *
+     * @return an {@code Iterator} over the elements in this array
+     */
+    Iterator<E> iterator();
+
     // Comparison and hashing
 
     /**
