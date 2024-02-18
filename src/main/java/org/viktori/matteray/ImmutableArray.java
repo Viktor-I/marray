@@ -4,6 +4,7 @@ import org.viktori.matteray.function.ArrayIndexFunction;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterator;
@@ -242,7 +243,7 @@ public class ImmutableArray<E> implements Array<E>, Cloneable {
     @Override
     @SuppressWarnings("unchecked")
     public List<E> toList() {
-        return Arrays.asList((E[]) elementData);
+        return Collections.unmodifiableList(Arrays.asList((E[]) elementData));
     }
 
     @Override
