@@ -6,7 +6,9 @@ import org.viktori.matteray.ImmutableArray;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -39,8 +41,8 @@ public final class ArrayUtils {
      * array will be based on the size of the shortest array,
      * i.e. {@code min(array1.size(), array2.size())}.
      *
-     * @param array1 first array to merge
-     * @param array2 second array to merge
+     * @param array1        first array to merge
+     * @param array2        second array to merge
      * @param mergeFunction function to apply on each pair of elements
      * @return a new immutable array based on the result of the merge function
      * @throws NullPointerException if any of the arrays, or the function is null
@@ -54,6 +56,7 @@ public final class ArrayUtils {
 
     /**
      * Sort a comparable array according to its natural order.
+     *
      * @param array array to sort
      * @return a new immutable array, sorted by its natural order
      */
@@ -65,6 +68,7 @@ public final class ArrayUtils {
 
     /**
      * Sort a comparable array based on a comparator.
+     *
      * @param array array to sort
      * @return a new immutable array, sorted according to comparator
      */
@@ -90,5 +94,45 @@ public final class ArrayUtils {
      */
     public static <E extends Comparable<E>> Array<E> toReversed(Array<E> array) {
         return new ImmutableArray<>(array.size(), i -> array.get(array.size() - 1 - i));
+    }
+
+    /**
+     * Return a new array with the result based of an accumulator function. This could be used to
+     * calculate things like min, max, sum, or concat. It works similarly
+     * to {@link Stream#reduce} but it never creates a stream. Null values are also supported but
+     * will be ignored in the calculation. An identity value can be provided for the case when the
+     * array is empty, or when it only contain {@code null} values.
+     *
+     * @param array array to aggregate
+     * @param accumulator function to accumulate values with
+     * @param identity value to return if there is nothing to aggregate
+     * @return the aggregated result, or identity if array contains no values to aggregate
+     */
+    public static <E> E aggregate(Array<E> array, BinaryOperator<E> accumulator, E identity) {
+        E current = null;
+        for (E element: array) {
+            if (element != null) {
+                if (current == null) {
+                    current = element;
+                } else {
+                    current = accumulator.apply(current, element);
+                }
+            }
+        }
+        return current != null? current : identity;
+    }
+
+    /**
+     * Return a new array with the result based of an accumulator function. This could be used to
+     * calculate things like min, max, sum, or concat. It works similarly to {@link Stream#reduce}
+     * but it never creates a stream. {@code Null} values are ignored in the calculation.
+     * {@code Optional.empty()} is returned when array is empty or only contain {@code null} values.
+     *
+     * @param array array to aggregate
+     * @param accumulator function to accumulate values with
+     * @return the aggregated result, or {@code Optional.empty()} if array contains no values to aggregate
+     */
+    public static <E> Optional<E> aggregate(Array<E> array, BinaryOperator<E> accumulator) {
+       return Optional.ofNullable(aggregate(array, accumulator, null));
     }
 }
