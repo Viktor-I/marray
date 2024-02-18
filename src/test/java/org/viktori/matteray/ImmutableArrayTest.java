@@ -263,10 +263,10 @@ public class ImmutableArrayTest {
 
     @Test
     public void testParallelStream() {
-        Array<String> array = new ImmutableArray<>("praise", "marray!");
+        Array<String> array = new ImmutableArray<>("praise", "matteray!");
 
         String result = array.parallelStream().map(String::toUpperCase).collect(Collectors.joining(" "));
-        assertEquals("PRAISE MARRAY!", result);
+        assertEquals("PRAISE MATTERAY!", result);
     }
 
     @Test
