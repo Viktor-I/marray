@@ -4,7 +4,9 @@ import org.viktori.matteray.function.ArrayIndexFunction;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.function.Predicate;
 
@@ -376,5 +378,27 @@ public interface Array<E> extends Collection<E> {
             Objects.requireNonNull(e);
         }
         return coll;
+    }
+
+    final class ArrayIterator<E> implements Iterator<E> {
+        private final Array<E> array;
+        int index = 0;
+
+        ArrayIterator(final Array<E> array) {
+            this.array = array;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return index < array.size();
+        }
+
+        @Override
+        public E next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            return array.get(index++);
+        }
     }
 }

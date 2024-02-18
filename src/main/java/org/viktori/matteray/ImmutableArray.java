@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.function.IntFunction;
 import java.util.stream.Stream;
 
@@ -193,12 +194,12 @@ public class ImmutableArray<E> implements Array<E>, Cloneable {
 
     @Override
     public Iterator<E> iterator() {
-        return toList().iterator();
+        return new ArrayIterator<>(this);
     }
 
     @Override
     public Spliterator<E> spliterator() {
-        return toList().spliterator();
+        return Spliterators.spliterator(this, Spliterator.IMMUTABLE | Spliterator.ORDERED);
     }
 
     @Override

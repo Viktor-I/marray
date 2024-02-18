@@ -268,7 +268,7 @@ public class ImmutableMatrix<E> implements Matrix<E>, Cloneable {
 
     @Override
     public Spliterator<E> spliterator() {
-        return Spliterators.spliterator(this, 0);
+        return Spliterators.spliterator(this, Spliterator.IMMUTABLE | Spliterator.ORDERED);
     }
 
     @Override
