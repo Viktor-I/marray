@@ -113,4 +113,10 @@ public class MatrixUtilsTest {
         assertEquals(rowsMirrored, MatrixUtils.toMirrored(sourceMatrix, Matrix.Axis.ROWS));
         assertEquals(columnsMirrored, MatrixUtils.toMirrored(sourceMatrix, Matrix.Axis.COLUMNS));
     }
+
+    @Test
+    public void testToMapped() {
+        Matrix<String> matrix = Matrix.of(Array.of("This", "is"), Array.of("a", "test"), Array.of("for", "matrix"));
+        assertEquals(Matrix.of(Array.of(4, 2), Array.of(1, 4), Array.of(3, 6)), MatrixUtils.toMapped(matrix, String::length));
+    }
 }

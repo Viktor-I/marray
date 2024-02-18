@@ -86,4 +86,15 @@ public final class MatrixUtils {
             case COLUMNS -> new ImmutableMatrix<>(rows, columns, (r, c) -> matrix.get(rows - 1 - r, c));
         };
     }
+
+    /**
+     * Return a new matrix based on the mapping function for each position.
+     *
+     * @param matrix to map
+     * @param mappingFunction function to map each element with
+     * @return a new immutable matrix based on the mapping function
+     */
+    public static <E1, E2> Matrix<E2> toMapped(Matrix<E1> matrix, Function<E1, E2> mappingFunction) {
+        return new ImmutableMatrix<>(matrix.rows(), matrix.columns(), (r, c) -> mappingFunction.apply(matrix.get(r, c)));
+    }
 }

@@ -97,6 +97,17 @@ public final class ArrayUtils {
     }
 
     /**
+     * Return a new array based on the mapping function for each index.
+     *
+     * @param array array to map
+     * @param mappingFunction function to map each element with
+     * @return a new immutable array based on the mapping function
+     */
+    public static <E1, E2> Array<E2> toMapped(Array<E1> array, Function<E1, E2> mappingFunction) {
+        return new ImmutableArray<>(array.size(), i -> mappingFunction.apply(array.get(i)));
+    }
+
+    /**
      * Return a new array with the result based of an accumulator function. This could be used to
      * calculate things like min, max, sum, or concat. It works similarly
      * to {@link Stream#reduce} but it never creates a stream. Null values are also supported but

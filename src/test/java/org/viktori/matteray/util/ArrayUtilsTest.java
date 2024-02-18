@@ -92,6 +92,12 @@ public class ArrayUtilsTest {
     }
 
     @Test
+    public void testToMapped() {
+        Array<String> array = Array.of("This", "is", "a", "test");
+        assertEquals(Array.of(4, 2, 1, 4), ArrayUtils.toMapped(array, String::length));
+    }
+
+    @Test
     void testAggregateWithSumOfIntegers() {
         assertEquals(0, ArrayUtils.aggregate(Array.of(), Integer::sum, 0));
         assertEquals(5, ArrayUtils.aggregate(Array.of(5), Integer::sum, 0));
