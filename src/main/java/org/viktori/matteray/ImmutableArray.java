@@ -4,9 +4,9 @@ import org.viktori.matteray.function.ArrayIndexFunction;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.IntFunction;
@@ -14,11 +14,11 @@ import java.util.stream.Stream;
 
 /**
  * Java array wrapper which implements the {@code Array} interface, which is immutable and easier
- * to work with than normal arrays as it is more similar to a {@link List} with
- * fixed size.
- * The class implements all immutable Collection operations, and permits all elements,
- * including {@code null}. Mutable operations such as {@code add} or {@code remove} will result
- * in an {@link UnsupportedOperationException}.
+ * to work with than normal arrays.
+ *
+ * The class implements all immutable List operations, and permits all elements,
+ * including {@code null}. Mutable operations such as {@code set}, {@code add} or {@code remove}
+ * will result in an {@link UnsupportedOperationException}.
  *
  * <p>The {@code size}, {@code isEmpty}, {@code get}, {@code set},
  * {@code iterator}, and {@code listIterator} operations run in constant
@@ -118,6 +118,20 @@ public class ImmutableArray<E> implements Array<E>, Cloneable {
         return (E) elementData[index];
     }
 
+    /**
+     * Setting an object in an immutable is not supported, but it is part of the
+     * {@link List} API. This action will always throw an {@link UnsupportedOperationException}.
+     *
+     * @param index index of the element to replace
+     * @param element element to be stored at the specified position
+     * @return nothing, as it will always throw an exception
+     * @throws UnsupportedOperationException always
+     */
+    @Override
+    public E set(int index, E element) throws UnsupportedOperationException {
+        throw new UnsupportedOperationException();
+    }
+
     @Override
     public int size() {
         return size;
@@ -194,6 +208,16 @@ public class ImmutableArray<E> implements Array<E>, Cloneable {
     }
 
     @Override
+    public ListIterator<E> listIterator() {
+        return new ArrayListIterator<>(this);
+    }
+
+    @Override
+    public ListIterator<E> listIterator(int index) {
+        return new ArrayListIterator<>(this, index);
+    }
+
+    @Override
     public Iterator<E> iterator() {
         return new ArrayIterator<>(this);
     }
@@ -241,13 +265,7 @@ public class ImmutableArray<E> implements Array<E>, Cloneable {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public List<E> toList() {
-        return Collections.unmodifiableList(Arrays.asList((E[]) elementData));
-    }
-
-    @Override
-    public Array<E> subArray(int fromIndex, int toIndex) {
+    public Array<E> subList(int fromIndex, int toIndex) {
         if (fromIndex == 0 && toIndex == size) {
             return this;
         }
