@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -123,27 +124,27 @@ public class ImmutableArrayTest {
     }
 
     @Test
-    public void testSubArray() {
+    public void testSubList() {
         Array<Integer> array = new ImmutableArray<>(1, 2, 3, 4, 5);
-        assertSame(array, array.subArray(0, 5));
-        assertEquals(Array.of(1, 2, 3, 4), array.subArray(0, 4));
-        assertEquals(Array.of(2, 3, 4, 5), array.subArray(1, 5));
-        assertEquals(Array.of(3), array.subArray(2, 3));
-        assertEquals(Array.of(), array.subArray(0, 0));
+        assertSame(array, array.subList(0, 5));
+        assertEquals(Array.of(1, 2, 3, 4), array.subList(0, 4));
+        assertEquals(Array.of(2, 3, 4, 5), array.subList(1, 5));
+        assertEquals(Array.of(3), array.subList(2, 3));
+        assertEquals(Array.of(), array.subList(0, 0));
     }
 
     @Test
     public void testSubArrayWhereIndicesOutOfRange() {
         Array<Integer> array = new ImmutableArray<>(1, 2, 3, 4, 5);
-        assertThrowsExactly(ArrayIndexOutOfBoundsException.class, () -> array.subArray(0, 6));
-        assertThrowsExactly(ArrayIndexOutOfBoundsException.class, () -> array.subArray(-1, 5));
+        assertThrowsExactly(ArrayIndexOutOfBoundsException.class, () -> array.subList(0, 6));
+        assertThrowsExactly(ArrayIndexOutOfBoundsException.class, () -> array.subList(-1, 5));
     }
 
     @Test
     public void testSubArrayWhereFromIndexGreaterThanToIndex() {
         Array<Integer> array = new ImmutableArray<>(1, 2, 3, 4, 5);
-        assertThrowsExactly(IllegalArgumentException.class, () -> array.subArray(5, 0));
-        assertThrowsExactly(IllegalArgumentException.class, () -> array.subArray(3, 2));
+        assertThrowsExactly(IllegalArgumentException.class, () -> array.subList(5, 0));
+        assertThrowsExactly(IllegalArgumentException.class, () -> array.subList(3, 2));
     }
 
     @Test
@@ -227,16 +228,72 @@ public class ImmutableArrayTest {
 
     @Test
     public void testIterator() {
-        Array<Boolean> array = new ImmutableArray<>(10, i -> i % 2 == 0);
+        Array<Integer> array = new ImmutableArray<>(5, i -> (i + 1) * 10);
 
-        int loops = 0;
-        Iterator<Boolean> it = array.iterator();
-        while (it.hasNext() && it.next() && it.hasNext()) {
-            Boolean b = it.next();
-            assertFalse(b);
-            loops++;
-        }
-        assertEquals(5, loops);
+        Iterator<Integer> it = array.iterator();
+        assertTrue(it.hasNext());
+        assertEquals(10, it.next());
+        assertTrue(it.hasNext());
+        assertEquals(20, it.next());
+        assertTrue(it.hasNext());
+        assertEquals(30, it.next());
+        assertTrue(it.hasNext());
+        assertEquals(40, it.next());
+        assertTrue(it.hasNext());
+        assertEquals(50, it.next());
+        assertFalse(it.hasNext());
+    }
+
+    @Test
+    public void testListIterator() {
+        Array<Integer> array = new ImmutableArray<>(5, i -> (i + 1) * 10);
+
+        ListIterator<Integer> it = array.listIterator();
+        assertTrue(it.hasNext());
+        assertEquals(10, it.next());
+        assertTrue(it.hasNext());
+        assertEquals(20, it.next());
+        assertTrue(it.hasNext());
+        assertEquals(30, it.next());
+        assertTrue(it.hasPrevious());
+        assertEquals(20, it.previous());
+        assertTrue(it.hasPrevious());
+        assertEquals(10, it.previous());
+        assertTrue(it.hasNext());
+        assertEquals(20, it.next());
+        assertTrue(it.hasNext());
+        assertEquals(30, it.next());
+        assertTrue(it.hasNext());
+        assertEquals(40, it.next());
+        assertTrue(it.hasNext());
+        assertEquals(50, it.next());
+        assertFalse(it.hasNext());
+    }
+
+    @Test
+    public void testListIteratorAtIndex() {
+        Array<Integer> array = new ImmutableArray<>(5, i -> (i + 1) * 10);
+
+        ListIterator<Integer> it = array.listIterator(array.size());
+        assertTrue(it.hasPrevious());
+        assertEquals(50, it.previous());
+        assertTrue(it.hasPrevious());
+        assertEquals(40, it.previous());
+        assertTrue(it.hasPrevious());
+        assertEquals(30, it.previous());
+        assertTrue(it.hasNext());
+        assertEquals(40, it.next());
+        assertTrue(it.hasNext());
+        assertEquals(50, it.next());
+        assertTrue(it.hasPrevious());
+        assertEquals(40, it.previous());
+        assertTrue(it.hasPrevious());
+        assertEquals(30, it.previous());
+        assertTrue(it.hasPrevious());
+        assertEquals(20, it.previous());
+        assertTrue(it.hasPrevious());
+        assertEquals(10, it.previous());
+        assertFalse(it.hasPrevious());
     }
 
     @Test
@@ -255,10 +312,10 @@ public class ImmutableArrayTest {
 
     @Test
     public void testStream() {
-        Array<String> array = new ImmutableArray<>("praise", "marray!");
+        Array<String> array = new ImmutableArray<>("praise", "matteray!");
 
         String result = array.stream().map(String::toUpperCase).collect(Collectors.joining(" "));
-        assertEquals("PRAISE MARRAY!", result);
+        assertEquals("PRAISE MATTERAY!", result);
     }
 
     @Test
@@ -267,20 +324,6 @@ public class ImmutableArrayTest {
 
         String result = array.parallelStream().map(String::toUpperCase).collect(Collectors.joining(" "));
         assertEquals("PRAISE MATTERAY!", result);
-    }
-
-    @Test
-    public void testToList() {
-        Array<String> array = new ImmutableArray<>("abc", "def", "ghi");
-
-        assertEquals(List.of("abc", "def", "ghi"), array.toList());
-    }
-
-    @Test
-    public void testToListWithNulls() {
-        Array<String> array = new ImmutableArray<>("abc", null, "def", null, "ghi");
-
-        assertEquals(Arrays.asList("abc", null, "def", null, "ghi"), array.toList());
     }
 
     @Test
@@ -356,13 +399,16 @@ public class ImmutableArrayTest {
 
     @Test
     public void testMutate() {
-        Array<Integer> array = new ImmutableArray<>(10, i -> i);
+        Array<Long> array = new ImmutableArray<>(10, i -> Long.valueOf(i));
 
-        assertThrowsExactly(UnsupportedOperationException.class, () -> array.add(11));
-        assertThrowsExactly(UnsupportedOperationException.class, () -> array.addAll(List.of(11, 12, 13)));
-        assertThrowsExactly(UnsupportedOperationException.class, () -> array.remove(9));
+        assertThrowsExactly(UnsupportedOperationException.class, () -> array.set(1, 5L));
+        assertThrowsExactly(UnsupportedOperationException.class, () -> array.add(11L));
+        assertThrowsExactly(UnsupportedOperationException.class, () -> array.add(1, 25L));
+        assertThrowsExactly(UnsupportedOperationException.class, () -> array.addAll(List.of(11L, 12L, 13L)));
+        assertThrowsExactly(UnsupportedOperationException.class, () -> array.remove(9L));
+        assertThrowsExactly(UnsupportedOperationException.class, () -> array.remove(1));
         assertThrowsExactly(UnsupportedOperationException.class, () -> array.removeIf((i) -> i % 2 == 0));
-        assertThrowsExactly(UnsupportedOperationException.class, () -> array.retainAll(List.of(1, 2, 3)));
+        assertThrowsExactly(UnsupportedOperationException.class, () -> array.retainAll(List.of(1L, 2L, 3L)));
         assertThrowsExactly(UnsupportedOperationException.class, () -> array.clear());
     }
 }

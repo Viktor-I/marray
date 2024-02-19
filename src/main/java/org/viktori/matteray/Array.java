@@ -2,26 +2,48 @@ package org.viktori.matteray;
 
 import org.viktori.matteray.function.ArrayIndexFunction;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.RandomAccess;
 import java.util.function.Predicate;
 
-public interface Array<E> extends Collection<E> {
+public interface Array<E> extends List<E>, RandomAccess {
 
     // Positional Access Operation
 
     /**
-     * Get the element at a given index in this list.
+     * Get the element at a given index in this array.
      *
      * @param index the index of the element to be returned
      * @return the element at index index in this array
-     * @throws ArrayIndexOutOfBoundsException if index &lt; 0 || index &gt;= size()
+     * @throws ArrayIndexOutOfBoundsException if the index is out of range
+     *         ({@code index < 0 || index >= size()})
      */
     E get(int index);
+
+    /**
+     * Replaces the element at the specified position in this array with the
+     * specified element (optional operation).
+     *
+     * @param index index of the element to replace
+     * @param element element to be stored at the specified position
+     * @return the element previously at the specified position
+     * @throws UnsupportedOperationException if the {@code set} operation
+     *         is not supported by this array
+     * @throws ClassCastException if the class of the specified element
+     *         prevents it from being added to this array
+     * @throws NullPointerException if the specified element is null and
+     *         this array does not permit null elements
+     * @throws IllegalArgumentException if some property of the specified
+     *         element prevents it from being added to this array
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *         ({@code index < 0 || index >= size()})
+     */
+    E set(int index, E element);
 
     // Search Operations
 
@@ -79,26 +101,10 @@ public interface Array<E> extends Collection<E> {
      * @throws IllegalArgumentException       if the endpoint indices are out of order
      *                                        {@code (fromIndex > toIndex)}
      */
-    Array<E> subArray(int fromIndex, int toIndex);
+    @Override
+    Array<E> subList(int fromIndex, int toIndex);
 
     // Query Operations
-
-    /**
-     * Returns a list containing all of the elements in this array in proper
-     * sequence (from first to last element).
-     *
-     * <p>The returned list will be "safe" in that no references to it are
-     * maintained by this list.  (In other words, this method must
-     * allocate a list if the class is mutable).
-     *
-     * <p>This method acts as bridge between array-based and list-based
-     * APIs.
-     *
-     * @return a list containing all of the elements in this array in proper
-     * sequence
-     * @see Arrays#asList(Object[])
-     */
-    List<E> toList();
 
     /**
      * Returns an iterator over the elements in this array. The elements are
@@ -159,6 +165,19 @@ public interface Array<E> extends Collection<E> {
     }
 
     /**
+     * Adding an object to a fixed size array is not supported, but it is part of the
+     * {@link List} API. This action will always throw an {@link UnsupportedOperationException}.
+     *
+     * @param index index at which the specified element is to be inserted
+     * @param e element whose presence in this collection is to be ensured
+     * @throws UnsupportedOperationException always
+     */
+    @Override
+    default void add(int index, E e) throws UnsupportedOperationException {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
      * Adding objects to a fixed size array is not supported, but it is part of the
      * {@link Collection} API. This action will always throw an {@link UnsupportedOperationException}.
      *
@@ -167,7 +186,22 @@ public interface Array<E> extends Collection<E> {
      * @throws UnsupportedOperationException always
      */
     @Override
-    default boolean addAll(Collection<? extends E> c) {
+    default boolean addAll(Collection<? extends E> c) throws UnsupportedOperationException {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Adding objects to a fixed size array is not supported, but it is part of the
+     * {@link List} API. This action will always throw an {@link UnsupportedOperationException}.
+     *
+     * @param index index at which to insert the first element from the
+     *              specified collection
+     * @param c – collection containing elements to be added to this collection
+     * @return nothing, as it will always throw an exception
+     * @throws UnsupportedOperationException always
+     */
+    @Override
+    default boolean addAll(int index, Collection<? extends E> c) throws UnsupportedOperationException {
         throw new UnsupportedOperationException();
     }
 
@@ -181,6 +215,19 @@ public interface Array<E> extends Collection<E> {
      */
     @Override
     default boolean remove(Object o) throws UnsupportedOperationException {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Removing an object from a fixed size array is not supported, but it is part of the
+     * {@link List} API. This action will always throw an {@link UnsupportedOperationException}.
+     *
+     * @param index the index of the element to be removed
+     * @return nothing, as it will always throw an exception
+     * @throws UnsupportedOperationException always
+     */
+    @Override
+    default E remove(int index) throws UnsupportedOperationException {
         throw new UnsupportedOperationException();
     }
 
@@ -390,15 +437,16 @@ public interface Array<E> extends Collection<E> {
 
     final class ArrayIterator<E> implements Iterator<E> {
         private final Array<E> array;
-        int index = 0;
+        private int index;
 
         ArrayIterator(final Array<E> array) {
             this.array = array;
+            this.index = -1;
         }
 
         @Override
         public boolean hasNext() {
-            return index < array.size();
+            return index < array.size() - 1;
         }
 
         @Override
@@ -406,7 +454,84 @@ public interface Array<E> extends Collection<E> {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
-            return array.get(index++);
+            return array.get(index++ + 1);
+        }
+    }
+
+    final class ArrayListIterator<E> implements ListIterator<E> {
+        private final Array<E> array;
+        private int index;
+        private boolean first;
+
+        ArrayListIterator(final Array<E> array) {
+            this(array, 0);
+        }
+
+        ArrayListIterator(final Array<E> array, int index) {
+            this.array = array;
+            this.index = index - 1;
+            this.first = true;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return index < array.size() - 1;
+        }
+
+        @Override
+        public E next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            if (first) {
+                first = false;
+            }
+            return array.get(index++ + 1);
+        }
+
+        @Override
+        public boolean hasPrevious() {
+            return index > 0;
+        }
+
+        @Override
+        public E previous() {
+            if (!hasPrevious()) {
+                throw new NoSuchElementException();
+            }
+            if (first) {
+                first = false;
+                return array.get(index);
+            }
+            return array.get(index-- - 1);
+        }
+
+        @Override
+        public int nextIndex() {
+            return index + 1;
+        }
+
+        @Override
+        public int previousIndex() {
+            return first? index : index - 1;
+        }
+
+        @Override
+        public void set(E e) {
+            if (index < 0) {
+                throw new IllegalStateException();
+            }
+            array.set(index, e);
+        }
+
+        @Override
+        public void add(E e) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
         }
     }
 }
