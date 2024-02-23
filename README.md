@@ -10,7 +10,8 @@ Benefits of using the arrays of this package compared to standard java arrays:
  * It has immutable arrays, which means they are thread safe and safe from side effects.
  * The arrays support generic types much better than the standard arrays.
  * There are built-in utilities for working with these arrays, which support things
-   sorting and reversing arrays.
+   sorting and reversing arrays. You can also do mathematical operations such as matrix aggregation
+   and dot product. All built-in utilities are implemented with generic types.
  * Arrays can be created easily using `Array.of(elements...)` or with lambda function
    `Array.of(size, i -> element)`.
 
@@ -22,6 +23,7 @@ Matrices can be useful when working with grids or doing matrix calculations
  * You can get individual rows or columns as arrays.
  * The whole matrix is a collection, which can be iterated through.
  * There are built-in utilities for working with these matrices, which support things
-   like rotating or mirroring matrices.
+   like rotating or mirroring matrices. You can also do mathematical operations such as matrix
+   multiplication. All built-in utilities are implemented with generic types.
  * Matrices can be created easily using `Matrix.of(rowArrays...)` or with lambda function
    `Matrix.of(rows, columns, (r, c) -> element)`.
