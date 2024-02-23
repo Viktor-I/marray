@@ -5,6 +5,7 @@ import org.viktori.matteray.Matrix;
 
 import java.util.Objects;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -96,5 +97,68 @@ public final class MatrixUtils {
      */
     public static <E1, E2> Matrix<E2> toMapped(Matrix<E1> matrix, Function<E1, E2> mappingFunction) {
         return new ImmutableMatrix<>(matrix.rows(), matrix.columns(), (r, c) -> mappingFunction.apply(matrix.get(r, c)));
+    }
+
+    /**
+     * Performs matrix multiplication between the specified matrices, based on the specified
+     * productFunction and sumFunction. The resulting matrix will be a matrix where each value is
+     * calculated as the dot product from the row in the first matrix and the column of the second
+     * matrix. This also means the number of rows will be taken from the first matrix, and number of
+     * columns from the second matrix.
+     *
+     * @param matrix1 first matrix
+     * @param matrix2 second matrix
+     * @param productFunction function to calculate the product of two values, i.e. (x, y) -> x * y
+     * @param sumFunction function to calculate a sum of two values, i.e. (x, y) -> x + y
+     * @return a new immutable matrix with the multiplied result.
+     * @throws IllegalArgumentException if matrix 1 column count is different from matrix 2 row count,
+     *                                  or this count is zero
+     */
+    public static <E> Matrix<E> multiply(Matrix<E> matrix1, Matrix<E> matrix2, BinaryOperator<E> productFunction, BinaryOperator<E> sumFunction) {
+        Objects.requireNonNull(matrix1);
+        Objects.requireNonNull(matrix2);
+        Objects.requireNonNull(productFunction);
+        Objects.requireNonNull(sumFunction);
+        validateMatrix1ColumnsEqualToMatrix2Rows(matrix1, matrix2);
+        validateMatrix1RowsAndMatrix2ColumnsNotEmptyWhenNoIdentityProvided(matrix1, matrix2);
+
+        return new ImmutableMatrix<>(matrix1.rows(), matrix2.columns(), (r, c) -> ArrayUtils.dotProduct(matrix1.row(r), matrix2.column(c), productFunction, sumFunction));
+    }
+
+    /**
+     * Performs matrix multiplication between the specified matrices, based on the specified
+     * productFunction and sumFunction. The resulting matrix will be a matrix where each value is
+     * calculated as the dot product from the row in the first matrix and the column of the second
+     * matrix. This also means the number of rows will be taken from the first matrix, and number of
+     * columns from the second matrix.
+     *
+     * @param matrix1 first matrix
+     * @param matrix2 second matrix
+     * @param productFunction function to calculate the product of two values, i.e. (x, y) -> x * y
+     * @param sumFunction function to calculate a sum of two values, i.e. (x, y) -> x + y
+     * @param identity value to return to represent zero, when dot product built from zero
+     * @return a new immutable matrix with the multiplied result.
+     * @throws IllegalArgumentException if matrix 1 column count is different from matrix 2 row count
+     */
+    public static <E> Matrix<E> multiply(Matrix<E> matrix1, Matrix<E> matrix2, BinaryOperator<E> productFunction, BinaryOperator<E> sumFunction, E identity) {
+        Objects.requireNonNull(matrix1);
+        Objects.requireNonNull(matrix2);
+        Objects.requireNonNull(productFunction);
+        Objects.requireNonNull(sumFunction);
+        validateMatrix1ColumnsEqualToMatrix2Rows(matrix1, matrix2);
+
+        return new ImmutableMatrix<>(matrix1.rows(), matrix2.columns(), (r, c) -> ArrayUtils.dotProduct(matrix1.row(r), matrix2.column(c), productFunction, sumFunction, identity));
+    }
+
+    private static void validateMatrix1ColumnsEqualToMatrix2Rows(Matrix<?> matrix1, Matrix<?> matrix2) {
+        if (matrix1.columns() != matrix2.rows()) {
+            throw new IllegalArgumentException("Column count of matrix 1 must be equal to row count of matrix 2, but column count was " + matrix1.columns() + " and rows were " + matrix2.rows());
+        }
+    }
+
+    private static void validateMatrix1RowsAndMatrix2ColumnsNotEmptyWhenNoIdentityProvided(Matrix<?> matrix1, Matrix<?> matrix2) {
+        if (matrix1.columns() == 0 && matrix1.rows() > 0 || matrix2.rows() == 0 && matrix2.columns() > 0) {
+            throw new IllegalArgumentException("Column count of matrix 1 and row count of matrix 2 must not be zero when no identity provided");
+        }
     }
 }

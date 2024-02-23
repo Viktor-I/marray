@@ -738,7 +738,7 @@ public interface Matrix<E> extends Collection<E> {
 
         @Override
         public boolean hasNext() {
-            return row < matrix.rows();
+            return row < matrix.rows() && matrix.columns() > 0;
         }
 
         @Override

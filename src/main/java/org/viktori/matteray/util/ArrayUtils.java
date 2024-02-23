@@ -121,7 +121,7 @@ public final class ArrayUtils {
      */
     public static <E> E aggregate(Array<E> array, BinaryOperator<E> accumulator, E identity) {
         E current = null;
-        for (E element: array) {
+        for (E element : array) {
             if (element != null) {
                 if (current == null) {
                     current = element;
@@ -145,5 +145,69 @@ public final class ArrayUtils {
      */
     public static <E> Optional<E> aggregate(Array<E> array, BinaryOperator<E> accumulator) {
        return Optional.ofNullable(aggregate(array, accumulator, null));
+    }
+
+    /**
+     * Return a new array representing the dot product between two arrays. The dot product is
+     * calculated by multiplying each pair of values and then summing them.
+     *
+     * @param vector1 first vector
+     * @param vector2 second vector
+     * @param productFunction function to calculate the product of two values, i.e. (x, y) -> x * y
+     * @param sumFunction function to calculate a sum of two values, i.e. (x, y) -> x + y
+     * @throws IllegalArgumentException if vectors are of different size, or empty
+     */
+    public static <E> E dotProduct(Array<E> vector1, Array<E> vector2, BinaryOperator<E> productFunction, BinaryOperator<E> sumFunction) {
+        Objects.requireNonNull(vector1);
+        Objects.requireNonNull(vector2);
+        Objects.requireNonNull(productFunction);
+        Objects.requireNonNull(sumFunction);
+        validateArraysOfEqualSize(vector1, vector2);
+        validateArraysNotEmptyWhenNoIdentityProvided(vector1, vector2);
+
+        E result = null;
+        for (int i = 0; i < vector1.size(); i++) {
+            E product = productFunction.apply(vector1.get(i), vector2.get(i));
+            result = i == 0 ? product : sumFunction.apply(result, product);
+        }
+        return result;
+    }
+
+    /**
+     * Return a new array representing the dot product between two arrays. The dot product is
+     * calculated by multiplying each pair of values and then summing them.
+     *
+     * @param vector1 first vector
+     * @param vector2 second vector
+     * @param productFunction function to calculate the product of two values, i.e. (x, y) -> x * y
+     * @param sumFunction function to calculate a sum of two values, i.e. (x, y) -> x + y
+     * @param identity value to return if the arrays are empty
+     * @throws IllegalArgumentException if vectors are of different size
+     */
+    public static <E> E dotProduct(Array<E> vector1, Array<E> vector2, BinaryOperator<E> productFunction, BinaryOperator<E> sumFunction, E identity) {
+        Objects.requireNonNull(vector1);
+        Objects.requireNonNull(vector2);
+        Objects.requireNonNull(productFunction);
+        Objects.requireNonNull(sumFunction);
+        validateArraysOfEqualSize(vector1, vector2);
+
+        E result = identity;
+        for (int i = 0; i < vector1.size(); i++) {
+            E product = productFunction.apply(vector1.get(i), vector2.get(i));
+            result = sumFunction.apply(result, product);
+        }
+        return result;
+    }
+
+    private static void validateArraysOfEqualSize(Array<?> vector1, Array<?> vector2) {
+        if (vector1.size() != vector2.size()) {
+            throw new IllegalArgumentException("Vectors for must be of equal size, but sizes were " + vector1.size() + " and " + vector2.size());
+        }
+    }
+
+    private static void validateArraysNotEmptyWhenNoIdentityProvided(Array<?> vector1, Array<?> vector2) {
+        if (vector1.isEmpty() || vector2.isEmpty()) {
+            throw new IllegalArgumentException("Vectors must not be empty when no identity provided");
+        }
     }
 }
