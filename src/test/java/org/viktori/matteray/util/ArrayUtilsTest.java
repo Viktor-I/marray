@@ -3,6 +3,7 @@ package org.viktori.matteray.util;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import org.junit.jupiter.api.Test;
 import org.viktori.matteray.Array;
@@ -159,12 +160,45 @@ public class ArrayUtilsTest {
     @Test
     void testAggregateWithAverageOfDoubles() {
         assertEquals(Optional.empty(), ArrayUtils.aggregate(Array.of(), Double::sum).map(sum -> divideBy(sum, 0)));
-        assertEquals(Optional.of(5.0), ArrayUtils.aggregate(Array.of(5.0), Double::sum).map(sum -> divideBy(sum, 1) ));
-        assertEquals(Optional.of(7.5), ArrayUtils.aggregate(Array.of(5.0, 10.0), Double::sum).map(sum -> divideBy(sum, 2) ));
-        assertEquals(Optional.of(12.5), ArrayUtils.aggregate(Array.of(5.0, 12.5, 20.0), Double::sum).map(sum -> divideBy(sum, 3) ));
+        assertEquals(Optional.of(5.0), ArrayUtils.aggregate(Array.of(5.0), Double::sum).map(sum -> divideBy(sum, 1)));
+        assertEquals(Optional.of(7.5), ArrayUtils.aggregate(Array.of(5.0, 10.0), Double::sum).map(sum -> divideBy(sum, 2)));
+        assertEquals(Optional.of(12.5), ArrayUtils.aggregate(Array.of(5.0, 12.5, 20.0), Double::sum).map(sum -> divideBy(sum, 3)));
     }
 
     private Double divideBy(Double value, int arraySize) {
         return value / arraySize;
+    }
+
+    @Test
+    public void testDotProductWithSize5() {
+        Array<Integer> vector1 = Array.of(1, 2, 3, 4, 5);
+        Array<Integer> vector2 = Array.of(2, 4, 6, 8, 10);
+
+        assertEquals(110, ArrayUtils.dotProduct(vector1, vector2, (x, y) -> x * y, (x, y) -> x + y));
+        assertEquals(110, ArrayUtils.dotProduct(vector1, vector2, (x, y) -> x * y, (x, y) -> x + y, 0));
+        assertEquals(110, ArrayUtils.dotProduct(vector2, vector1, (x, y) -> x * y, (x, y) -> x + y));
+        assertEquals(110, ArrayUtils.dotProduct(vector2, vector1, (x, y) -> x * y, (x, y) -> x + y, 0));
+    }
+
+    @Test
+    public void testDotProductWithSize5And4() {
+        Array<Integer> vector1 = Array.of(1, 2, 3, 4, 5);
+        Array<Integer> vector2 = Array.of(2, 4, 6, 8);
+
+        assertThrowsExactly(IllegalArgumentException.class, () -> ArrayUtils.dotProduct(vector1, vector2, (x, y) -> x * y, (x, y) -> x + y));
+        assertThrowsExactly(IllegalArgumentException.class, () -> ArrayUtils.dotProduct(vector1, vector2, (x, y) -> x * y, (x, y) -> x + y, 0));
+        assertThrowsExactly(IllegalArgumentException.class, () -> ArrayUtils.dotProduct(vector2, vector1, (x, y) -> x * y, (x, y) -> x + y));
+        assertThrowsExactly(IllegalArgumentException.class, () -> ArrayUtils.dotProduct(vector2, vector1, (x, y) -> x * y, (x, y) -> x + y, 0));
+    }
+
+    @Test
+    public void testDotProductWithSize0() {
+        Array<Integer> vector1 = Array.of();
+        Array<Integer> vector2 = Array.of();
+
+        assertThrowsExactly(IllegalArgumentException.class, () -> ArrayUtils.dotProduct(vector1, vector2, (x, y) -> x * y, (x, y) -> x + y));
+        assertEquals(0, ArrayUtils.dotProduct(vector1, vector2, (x, y) -> x * y, (x, y) -> x + y, 0));
+        assertThrowsExactly(IllegalArgumentException.class, () -> ArrayUtils.dotProduct(vector2, vector1, (x, y) -> x * y, (x, y) -> x + y));
+        assertEquals(0, ArrayUtils.dotProduct(vector2, vector1, (x, y) -> x * y, (x, y) -> x + y, 0));
     }
 }

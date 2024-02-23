@@ -2,6 +2,7 @@ package org.viktori.matteray.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import org.junit.jupiter.api.Test;
 import org.viktori.matteray.Array;
@@ -118,5 +119,91 @@ public class MatrixUtilsTest {
     public void testToMapped() {
         Matrix<String> matrix = Matrix.of(Array.of("This", "is"), Array.of("a", "test"), Array.of("for", "matrix"));
         assertEquals(Matrix.of(Array.of(4, 2), Array.of(1, 4), Array.of(3, 6)), MatrixUtils.toMapped(matrix, String::length));
+    }
+
+    @Test
+    public void testMultiplyWithDimensions3x2And2x3() {
+        Matrix<Integer> matrix1 = Matrix.of(
+                Array.of(1, 2, 3),
+                Array.of(4, 5, 6));
+        Matrix<Integer> matrix2 = Matrix.of(
+                Array.of(1, 2),
+                Array.of(3, 4),
+                Array.of(5, 6));
+
+        assertEquals(Matrix.of(
+                Array.of(22, 28),
+                Array.of(49, 64)), MatrixUtils.multiply(matrix1, matrix2, (x, y) -> x * y, (x, y) -> x + y));
+        assertEquals(Matrix.of(
+                Array.of(22, 28),
+                Array.of(49, 64)), MatrixUtils.multiply(matrix1, matrix2, (x, y) -> x * y, (x, y) -> x + y, 0));
+        assertEquals(Matrix.of(
+                Array.of(9, 12, 15),
+                Array.of(19, 26, 33),
+                Array.of(29, 40, 51)), MatrixUtils.multiply(matrix2, matrix1, (x, y) -> x * y, (x, y) -> x + y));
+        assertEquals(Matrix.of(
+                Array.of(9, 12, 15),
+                Array.of(19, 26, 33),
+                Array.of(29, 40, 51)), MatrixUtils.multiply(matrix2, matrix1, (x, y) -> x * y, (x, y) -> x + y, 0));
+    }
+
+    @Test
+    public void testMultiplyWithDimensions1x5And5x1() {
+        Matrix<Integer> matrix1 = Matrix.of(Array.of(1, 2, 3, 4, 5));
+        Matrix<Integer> matrix2 = Matrix.of(Array.of(1), Array.of(2), Array.of(3), Array.of(4), Array.of(5));
+
+        assertEquals(Matrix.of(
+                Array.of(55)), MatrixUtils.multiply(matrix1, matrix2, (x, y) -> x * y, (x, y) -> x + y));
+        assertEquals(Matrix.of(
+                Array.of(55)), MatrixUtils.multiply(matrix1, matrix2, (x, y) -> x * y, (x, y) -> x + y, 0));
+        assertEquals(Matrix.of(
+                Array.of(1, 2, 3, 4, 5),
+                Array.of(2, 4, 6, 8, 10),
+                Array.of(3, 6, 9, 12, 15),
+                Array.of(4, 8, 12, 16, 20),
+                Array.of(5, 10, 15, 20, 25)), MatrixUtils.multiply(matrix2, matrix1, (x, y) -> x * y, (x, y) -> x + y));
+        assertEquals(Matrix.of(
+                Array.of(1, 2, 3, 4, 5),
+                Array.of(2, 4, 6, 8, 10),
+                Array.of(3, 6, 9, 12, 15),
+                Array.of(4, 8, 12, 16, 20),
+                Array.of(5, 10, 15, 20, 25)), MatrixUtils.multiply(matrix2, matrix1, (x, y) -> x * y, (x, y) -> x + y, 0));
+    }
+
+    @Test
+    public void testMultiplyWithDimensions3x1And2x4() {
+        Matrix<Integer> matrix1 = Matrix.of(
+                Array.of(1, 2, 3));
+        Matrix<Integer> matrix2 = Matrix.of(
+                Array.of(1, 2),
+                Array.of(3, 4),
+                Array.of(5, 6),
+                Array.of(7, 8));
+
+        assertThrowsExactly(IllegalArgumentException.class, () -> MatrixUtils.multiply(matrix1, matrix2, (x, y) -> x * y, (x, y) -> x + y));
+        assertThrowsExactly(IllegalArgumentException.class, () -> MatrixUtils.multiply(matrix1, matrix2, (x, y) -> x * y, (x, y) -> x + y, 0));
+        assertThrowsExactly(IllegalArgumentException.class, () -> MatrixUtils.multiply(matrix2, matrix1, (x, y) -> x * y, (x, y) -> x + y));
+        assertThrowsExactly(IllegalArgumentException.class, () -> MatrixUtils.multiply(matrix2, matrix1, (x, y) -> x * y, (x, y) -> x + y, 0));
+    }
+
+    @Test
+    public void testMultiplyWithDimensions0x0And0x0() {
+        Matrix<Integer> matrix = Matrix.of();
+
+        assertEquals(Matrix.of(), MatrixUtils.multiply(matrix, matrix, (x, y) -> x * y, (x, y) -> x + y));
+        assertEquals(Matrix.of(), MatrixUtils.multiply(matrix, matrix, (x, y) -> x * y, (x, y) -> x + y, 0));
+    }
+
+    @Test
+    public void testMultiplyWithDimensions2x0And0x2() {
+        Matrix<Integer> matrix1 = Matrix.of(2, 0, (r, c) -> 0);
+        Matrix<Integer> matrix2 = Matrix.of(0, 2, (r, c) -> 0);
+
+        assertThrowsExactly(IllegalArgumentException.class, () -> MatrixUtils.multiply(matrix1, matrix2, (x, y) -> x * y, (x, y) -> x + y));
+        assertEquals(Matrix.of(
+                Array.of(0, 0),
+                Array.of(0, 0)), MatrixUtils.multiply(matrix1, matrix2, (x, y) -> x * y, (x, y) -> x + y, 0));
+        assertEquals(Matrix.of(), MatrixUtils.multiply(matrix2, matrix1, (x, y) -> x * y, (x, y) -> x + y));
+        assertEquals(Matrix.of(), MatrixUtils.multiply(matrix2, matrix1, (x, y) -> x * y, (x, y) -> x + y, 0));
     }
 }
