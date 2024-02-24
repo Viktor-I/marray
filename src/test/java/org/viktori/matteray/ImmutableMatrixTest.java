@@ -294,6 +294,24 @@ public class ImmutableMatrixTest {
     }
 
     @Test
+    public void testRowArray() {
+        Matrix<String> matrix = new ImmutableMatrix<>(new String[][]{{"a", "b", "c", "d"}, {"e", "f", "g", "h"}});
+        assertEquals(Array.of(
+                new ImmutableArray<>("a", "b", "c", "d"),
+                new ImmutableArray<>("e", "f", "g", "h")), matrix.rowArray());
+    }
+
+    @Test
+    public void testColumnArray() {
+        Matrix<String> matrix = new ImmutableMatrix<>(new String[][]{{"a", "b", "c", "d"}, {"e", "f", "g", "h"}});
+        assertEquals(Array.of(
+                new ImmutableArray<>("a", "e"),
+                new ImmutableArray<>("b", "f"),
+                new ImmutableArray<>("c", "g"),
+                new ImmutableArray<>("d", "h")), matrix.columnArray());
+    }
+
+    @Test
     public void testSubMatrix() {
         Matrix<String> matrix = new ImmutableMatrix<>(new String[][]{{"a", "b", "c", "d"}, {"e", "f", "g", "h"}, {"i", "j", "k", "l"}});
         assertSame(matrix, matrix.subMatrix(0, 3, 0, 4));

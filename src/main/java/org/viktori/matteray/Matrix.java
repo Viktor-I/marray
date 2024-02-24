@@ -72,6 +72,30 @@ public interface Matrix<E> extends Collection<E> {
      */
     Array<E> column(int columnIndex);
 
+    /**
+     * Returns an array containing all rows of elements in this matrix,
+     * in proper order.
+     *
+     * <p>The returned array will act as a view into the current matrix.
+     * (In other words, if this matrix is mutable, changes must be reflected in the
+     * returned array).
+     *
+     * @return an array containing all rows of elements of in the matrix
+     */
+    Array<Array<E>> rowArray();
+
+    /**
+     * Returns an array containing all columns of elements in this matrix,
+     * in proper order.
+     *
+     * <p>The returned array will act as a view into the current matrix.
+     * (In other words, if this matrix is mutable, changes must be reflected in the
+     * returned array).
+     *
+     * @return an array containing all columns of elements of in the matrix
+     */
+    Array<Array<E>> columnArray();
+
     // Query operations
 
     /**

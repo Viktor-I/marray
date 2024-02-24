@@ -432,11 +432,21 @@ public class ImmutableMatrix<E> implements Matrix<E>, Cloneable {
     @Override
     @SuppressWarnings("unchecked")
     public Array<E> column(int columnIndex) {
-        final Object[] column = new Object[rows];
+        Object[] column = new Object[rows];
         for (int r = 0; r < rows; r++) {
             column[r] = elementData[r][columnIndex];
         }
         return new ImmutableArray<>((E[]) column);
+    }
+
+    @Override
+    public Array<Array<E>> rowArray() {
+        return new ImmutableArray<>(rows(), i -> row(i));
+    }
+
+    @Override
+    public Array<Array<E>> columnArray() {
+        return new ImmutableArray<>(columns(), i -> column(i));
     }
 
     @Override
