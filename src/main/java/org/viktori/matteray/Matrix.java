@@ -80,7 +80,7 @@ public interface Matrix<E> extends Collection<E> {
      * (In other words, if this matrix is mutable, changes must be reflected in the
      * returned array).
      *
-     * @return an array containing all rows of elements of in the matrix
+     * @return an array containing all rows of elements in the matrix
      */
     Array<Array<E>> rowArray();
 
@@ -92,7 +92,7 @@ public interface Matrix<E> extends Collection<E> {
      * (In other words, if this matrix is mutable, changes must be reflected in the
      * returned array).
      *
-     * @return an array containing all columns of elements of in the matrix
+     * @return an array containing all columns of elements in the matrix
      */
     Array<Array<E>> columnArray();
 
