@@ -3,12 +3,27 @@ package org.viktori.matteray.util;
 import org.viktori.matteray.ImmutableMatrix;
 import org.viktori.matteray.Matrix;
 
+import java.util.Collections;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+/**
+ * This class consists exclusively of static methods that operate on or return
+ * matrices. It contains polymorphic algorithms that operate on
+ * matrices, "wrappers", which return a new matrix backed by a
+ * specified matrix, and a few other odds and ends. It can be seen as an
+ * extension of the {@link Collections class}, for matrices.
+ *
+ * <p>The methods of this class all throw a {@code NullPointerException}
+ * if the matrices or class objects provided to them are null.
+ *
+ * @author Viktor Ingemansson
+ * @see Collections
+ * @see Matrix
+ */
 public final class MatrixUtils {
 
     private MatrixUtils() {

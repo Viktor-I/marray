@@ -11,6 +11,62 @@ import java.util.Objects;
 import java.util.RandomAccess;
 import java.util.function.Predicate;
 
+/**
+ * An ordered list, with a fixed size and random access. It is very similar to
+ * a raw java array but gives you more methods to work with, and is interchangeable
+ * with lists where necessary.
+ *
+ * <p>Since arrays are of fixed size, any operation that affects the size of the
+ * list is prohibited, and will result in an {@link UnsupportedOperationException}.
+ * These include, but is not limited to, {@code add}, {@code insert}, and {@code remove} methods.
+ *
+ * <p>Some array implementations have restrictions on the elements that
+ * they may contain. For example, some implementations prohibit null elements,
+ * and some have restrictions on the types of their elements. Attempting to
+ * add an ineligible element throws an unchecked exception, typically
+ * {@code NullPointerException} or {@code ClassCastException}. Attempting
+ * to query the presence of an ineligible element may throw an exception,
+ * or it may simply return false; some implementations will exhibit the former
+ * behavior and some will exhibit the latter.
+ *
+ * <h2><a id="unmodifiable">Unmodifiable Arrays</a></h2>
+ * <p>The {@link Array#of(Object...) Array.of} and
+ * {@link Array#copyOf Array.copyOf} static factory methods
+ * provide a convenient way to create unmodifiable lists. The {@code Array}
+ * instances created by these methods have the following characteristics:
+ *
+ * <ul>
+ * <li>They are <a href="Collection.html#unmodifiable"><i>unmodifiable</i></a>. Elements cannot
+ * replaced. Calling any mutator method on the Array
+ * will always cause {@code UnsupportedOperationException} to be thrown.
+ * However, if the contained elements are themselves mutable,
+ * this may cause the Array's contents to appear to change.
+ * <li>They disallow {@code null} elements. Attempts to create them with
+ * {@code null} elements result in {@code NullPointerException}.
+ * <li>They are serializable if all elements are serializable.
+ * <li>The order of elements in the array is the same as the order of the
+ * provided arguments, or of the elements in the provided raw array.
+ * <li>The lists and their {@link #subList(int, int) subList} views implement the
+ * {@link RandomAccess} interface.
+ * <li>They are <a href="../lang/doc-files/ValueBased.html">value-based</a>.
+ * Programmers should treat instances that are {@linkplain #equals(Object) equal}
+ * as interchangeable and should not use them for synchronization, or
+ * unpredictable behavior may occur. For example, in a future release,
+ * synchronization may fail. Callers should make no assumptions about the
+ * identity of the returned instances. Factories are free to
+ * create new instances or reuse existing ones.
+ * </ul>
+ *
+ * <p>This interface is an extension upon the
+ * <a href="{@docRoot}/java.base/java/util/package-summary.html#CollectionsFramework">
+ * Java Collections Framework</a>.
+ *
+ * @param <E> the type of elements in this array
+ *
+ * @author Viktor Ingemansson
+ * @see Collection
+ * @see List
+ */
 public interface Array<E> extends List<E>, RandomAccess {
 
     // Positional Access Operation
@@ -392,6 +448,8 @@ public interface Array<E> extends List<E>, RandomAccess {
      *
      * @param length       the length of the array
      * @param initFunction the function to initialize values in the array
+     * @return an {@code Array} of size {@code length}
+     *         containing the elements given by the init function
      * @throws NullPointerException     if an element is {@code null} or if the initFunction is {@code null}
      * @throws IllegalArgumentException if the specified initial capacity
      *                                  is negative
@@ -435,6 +493,10 @@ public interface Array<E> extends List<E>, RandomAccess {
         return coll;
     }
 
+    /**
+     * Iterator implementation for arrays
+     * @param <E> element type
+     */
     final class ArrayIterator<E> implements Iterator<E> {
         private final Array<E> array;
         private int index;
@@ -458,6 +520,10 @@ public interface Array<E> extends List<E>, RandomAccess {
         }
     }
 
+    /**
+     * ListIterator implementation for arrays
+     * @param <E> element type
+     */
     final class ArrayListIterator<E> implements ListIterator<E> {
         private final Array<E> array;
         private int index;
