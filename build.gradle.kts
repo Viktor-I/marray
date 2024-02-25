@@ -8,7 +8,7 @@ val release =  System.getProperty("release")?.toBoolean() ?: false
 val versionSuffix = if (release) "" else "-SNAPSHOT"
 
 version = "0.1${versionSuffix}"
-group = "org.viktori"
+group = "io.github.viktor-i"
 description = "A light-weight library for working with safe arrays and matrices, built upon the Java collections framework."
 
 repositories {
