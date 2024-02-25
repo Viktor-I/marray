@@ -4,6 +4,7 @@ import org.viktori.matteray.Array;
 import org.viktori.matteray.ImmutableArray;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.Optional;
@@ -12,6 +13,20 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+/**
+ * This class consists exclusively of static methods that operate on or return
+ * arrays. It contains polymorphic algorithms that operate on
+ * arrays, "wrappers", which return a new array backed by a
+ * specified array, and a few other odds and ends. It can be seen as an
+ * extension of the {@link Collections class}, for arrays.
+ *
+ * <p>The methods of this class all throw a {@code NullPointerException}
+ * if the arrays or class objects provided to them are null.
+ *
+ * @author Viktor Ingemansson
+ * @see Collections
+ * @see Array
+ */
 public final class ArrayUtils {
 
     private ArrayUtils() {
@@ -70,6 +85,7 @@ public final class ArrayUtils {
      * Sort a comparable array based on a comparator.
      *
      * @param array array to sort
+     * @param comparator comparator to sort with
      * @return a new immutable array, sorted according to comparator
      */
     @SuppressWarnings("unchecked")
@@ -87,7 +103,8 @@ public final class ArrayUtils {
 
     /**
      * Return a new array where the indices are reversed.
-     * <p>Example: [15, 20, 10] -> [10, 20, 15]</p>
+     *
+     * <p>Example: [15, 20, 10] -> [10, 20, 15]
      *
      * @param array array to reverse
      * @return a new immutable array where indices are reversed
@@ -155,6 +172,7 @@ public final class ArrayUtils {
      * @param vector2 second vector
      * @param productFunction function to calculate the product of two values, i.e. (x, y) -> x * y
      * @param sumFunction function to calculate a sum of two values, i.e. (x, y) -> x + y
+     * @return the dot product of the array
      * @throws IllegalArgumentException if vectors are of different size, or empty
      */
     public static <E> E dotProduct(Array<E> vector1, Array<E> vector2, BinaryOperator<E> productFunction, BinaryOperator<E> sumFunction) {
@@ -182,6 +200,7 @@ public final class ArrayUtils {
      * @param productFunction function to calculate the product of two values, i.e. (x, y) -> x * y
      * @param sumFunction function to calculate a sum of two values, i.e. (x, y) -> x + y
      * @param identity value to return if the arrays are empty
+     * @return the dot product of the array
      * @throws IllegalArgumentException if vectors are of different size
      */
     public static <E> E dotProduct(Array<E> vector1, Array<E> vector2, BinaryOperator<E> productFunction, BinaryOperator<E> sumFunction, E identity) {

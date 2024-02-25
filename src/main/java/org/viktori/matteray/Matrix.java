@@ -6,9 +6,66 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.RandomAccess;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
 
+/**
+ * An ordered grid of arrays, with a fixed size in two dimensions and random access.
+ * It is very similar to two-dimensional raw java array but gives you more methods to work with,
+ * and can be used as a collection in itself or converted into multiple arrays of rows or columns.
+ *
+ * <p>Since matrices are of fixed size, any operation that affects the size of the
+ * collection is prohibited, and will result in an {@link UnsupportedOperationException}.
+ * These include, but is not limited to, {@code add} and {@code remove} methods.
+ *
+ * <p>Some matrix implementations have restrictions on the elements that
+ * they may contain. For example, some implementations prohibit null elements,
+ * and some have restrictions on the types of their elements. Attempting to
+ * add an ineligible element throws an unchecked exception, typically
+ * {@code NullPointerException} or {@code ClassCastException}. Attempting
+ * to query the presence of an ineligible element may throw an exception,
+ * or it may simply return false; some implementations will exhibit the former
+ * behavior and some will exhibit the latter.
+ *
+ * <h2><a id="unmodifiable">Unmodifiable Matrices</a></h2>
+ * <p>The {@link Matrix#of(Array...) Matrix.of} and
+ * {@link Matrix#copyOf Matrix.copyOf} static factory methods
+ * provide a convenient way to create unmodifiable matrices. The {@code Matrix}
+ * instances created by these methods have the following characteristics:
+ *
+ * <ul>
+ * <li>They are <a href="Collection.html#unmodifiable"><i>unmodifiable</i></a>. Elements cannot
+ * replaced. Calling any mutator method on the Array
+ * will always cause {@code UnsupportedOperationException} to be thrown.
+ * However, if the contained elements are themselves mutable,
+ * this may cause the Matrix's contents to appear to change.
+ * <li>They disallow {@code null} elements. Attempts to create them with
+ * {@code null} elements result in {@code NullPointerException}.
+ * <li>They are serializable if all elements are serializable.
+ * <li>The order of elements in the matrix is the same as the order of the
+ * provided arguments, or of the elements in the provided raw two-dimensional array.
+ * <li>The matrices and their {@link #subMatrix(int, int, int, int) subMatrix} views implement the
+ * {@link RandomAccess} interface.
+ * <li>They are <a href="../lang/doc-files/ValueBased.html">value-based</a>.
+ * Programmers should treat instances that are {@linkplain #equals(Object) equal}
+ * as interchangeable and should not use them for synchronization, or
+ * unpredictable behavior may occur. For example, in a future release,
+ * synchronization may fail. Callers should make no assumptions about the
+ * identity of the returned instances. Factories are free to
+ * create new instances or reuse existing ones.
+ * </ul>
+ *
+ * <p>This interface is an extension upon the
+ * <a href="{@docRoot}/java.base/java/util/package-summary.html#CollectionsFramework">
+ * Java Collections Framework</a>.
+ *
+ * @param <E> the type of elements in this matrix
+ *
+ * @author Viktor Ingemansson
+ * @see Collection
+ * @see Array
+ */
 public interface Matrix<E> extends Collection<E> {
 
     // Positional Access Operation
@@ -137,7 +194,7 @@ public interface Matrix<E> extends Collection<E> {
      * runtime component type} is {@code Object}.
      *
      * <p>Note that the returned array is not two-dimensional and will thus return all
-     * elements in all rows. Use {@link #toArray2D()} for a two-dimensional array.</p>
+     * elements in all rows. Use {@link #toArray2D()} for a two-dimensional array.
      *
      * <p>The returned array will be "safe" in that no references to it are
      * maintained by this matrix.  (In other words, this method must
@@ -173,7 +230,7 @@ public interface Matrix<E> extends Collection<E> {
      * the same order.
      *
      * <p>Note that the returned array is not two-dimensional and will thus return all
-     * elements in all rows. Use {@link #toArray2D(T[][])} for a two-dimensional array.</p>
+     * elements in all rows. Use {@link #toArray2D(Object[][])} for a two-dimensional array.
      *
      * @param <T> the component type of the array to contain the matrix
      * @param a   the array into which the elements of this matrix are to be
@@ -217,7 +274,7 @@ public interface Matrix<E> extends Collection<E> {
      * the same order.
      *
      * <p>Note that the returned array is not two-dimensional and will thus return all
-     * elements in all rows. Use {@link #toArray2D(IntFunction)} for a two-dimensional array.</p>
+     * elements in all rows. Use {@link #toArray2D(IntFunction)} for a two-dimensional array.
      *
      * @param <T>       the component type of the array to contain the collection
      * @param generator a function which produces a new array of the desired
@@ -545,7 +602,7 @@ public interface Matrix<E> extends Collection<E> {
      * @param row3 the third row of elements
      * @param row4 the fourth row of elements
      * @param row5 the fifth row of elements
-     * @return an {@code Matrix} containing the specified elements
+     * @return a {@code Matrix} containing the specified elements
      * @throws NullPointerException     if a row or an element is {@code null}
      * @throws IllegalArgumentException if the rows are of different size
      */
@@ -558,7 +615,7 @@ public interface Matrix<E> extends Collection<E> {
      *
      * @param <E>  the {@code Matrix}'s element type
      * @param rows the rows of elements to be contained in the matrix
-     * @return an {@code Matrix} containing the specified elements
+     * @return a {@code Matrix} containing the specified elements
      * @throws NullPointerException     if a row or an element is {@code null}
      * @throws IllegalArgumentException if the rows are of different size
      */
@@ -573,6 +630,8 @@ public interface Matrix<E> extends Collection<E> {
      *
      * @param length       the row and column count the matrix (i.e its height and width)
      * @param initFunction the function to initialize values in the matrix
+     * @return a {@code Matrix} of size {@code length}&times;{@code length}
+     *         containing the elements given by the init function
      * @throws NullPointerException     if an element is {@code null} or if the initFunction is {@code null}
      * @throws IllegalArgumentException if the specified length is negative
      */
@@ -588,6 +647,8 @@ public interface Matrix<E> extends Collection<E> {
      * @param rows         row count in the matrix (i.e. its height)
      * @param columns      column count in the matrix (i.e. its width)
      * @param initFunction the function to initialize values in the matrix
+     * @return a {@code Matrix} of size {@code rows}&times;{@code columns}
+     *         containing the elements given by the init function
      * @throws NullPointerException     if an element is {@code null} or if the initFunction is {@code null}
      * @throws IllegalArgumentException if the specified rows, or specified columns is negative
      */
@@ -599,6 +660,8 @@ public interface Matrix<E> extends Collection<E> {
      * Returns an immutable matrix with a single row.
      *
      * @param rowArray array to get row values from
+     * @return a {@code Matrix} of size {@code 1}&times;{@code rowArray.size}
+     *         containing the elements of the given row
      * @throws NullPointerException if an element is {@code null}
      */
     static <E> Matrix<E> fromRow(Array<E> rowArray) {
@@ -609,6 +672,8 @@ public interface Matrix<E> extends Collection<E> {
      * Returns an immutable matrix with a single column.
      *
      * @param columnArray array to get column values from
+     * @return a {@code Matrix} of size {@code columnArray.size}&times;{@code 1}
+     *         containing the elements of the given column
      * @throws NullPointerException if an element is {@code null}
      */
     static <E> Matrix<E> fromColumn(Array<E> columnArray) {
@@ -655,102 +720,104 @@ public interface Matrix<E> extends Collection<E> {
 
     /**
      * Matrix rotation.
-     * <p>
-     * Following options exist:
+     *
+     * <p>Following options exist:
      * <ul>
      *     <li>{@link #NONE} - no rotation.</li>
      *     <li>{@link #LEFT} - rotate left.</li>
      *     <li>{@link #HALF} - rotate halfway.</li>
      *     <li>{@link #RIGHT} - rotate right.</li>
      * </ul>
-     * </p>
      */
     enum Rotation {
         /**
-         * <p>No rotation, 0&deg;. (rowIndex = rowIndex, columnIndex = columnIndex)</p>
+         * No rotation, 0&deg;. (rowIndex = rowIndex, columnIndex = columnIndex)
+         *
          * <p>Example:<br>
          * <pre>
          * [1, 2, 3]    [4, 5, 6]<br>
          * [4, 5, 6] -> [4, 5, 6]<br>
          * [7, 8, 9]    [7, 8. 9]<br>
          * </pre>
-         * </p>
          */
         NONE,
 
         /**
-         * <p>Left rotation, -90&deg;. (rowIndex = columns - 1 - columnIndex, columnIndex = rowIndex)</p>
+         * Left rotation, -90&deg;. (rowIndex = columns - 1 - columnIndex, columnIndex = rowIndex)
+         *
          * <p>Example:<br>
          * <pre>
          * [1, 2, 3]    [3, 6, 9]<br>
          * [4, 5, 6] -> [2, 5, 8]<br>
          * [7, 8, 9]    [1, 4. 7]<br>
          * </pre>
-         * </p>
          */
         LEFT,
 
         /**
-         * <p>Halfway rotation, &plusmn;180&deg;. (rowIndex = rows - 1 - rowIndex, columnIndex = columns - 1 - columnIndex)</p>
+         * Halfway rotation, &plusmn;180&deg;. (rowIndex = rows - 1 - rowIndex, columnIndex = columns - 1 - columnIndex)
+         *
          * <p>Example:<br>
          * <pre>
          * [1, 2, 3]    [9, 8, 7]<br>
          * [4, 5, 6] -> [6, 5, 4]<br>
          * [7, 8, 9]    [3, 2. 1]<br>
          * </pre>
-         * </p>
          */
         HALF,
 
         /**
-         * <p>Right rotation, +90&deg;. (rowIndex = columnIndex, columnIndex = rows - 1 - rowIndex)</p>
+         * Right rotation, +90&deg;. (rowIndex = columnIndex, columnIndex = rows - 1 - rowIndex)
+         *
          * <p>Example:<br>
          * <pre>
          * [1, 2, 3]    [7, 4, 1]<br>
          * [4, 5, 6] -> [8, 5, 2]<br>
          * [7, 8, 9]    [9, 6. 3]<br>
          * </pre>
-         * </p>
          */
         RIGHT
     }
 
     /**
      * Matrix axis, which can be used for mirroring/reflection.
-     * <p>
-     * Following options exist:
+     *
+     * <p>Following options exist:
      * <ul>
      *     <li>{@link #ROWS} - mirror rows.</li>
      *     <li>{@link #COLUMNS} - mirror columns.</li>
      * </ul>
-     * </p>
      */
     enum Axis {
         /**
-         * <p>Mirror rows, i.e. inverse column index. (rowIndex = rowIndex, columnIndex = columns - 1 - columnIndex)</p>
+         * Mirror rows, i.e. inverse column index. (rowIndex = rowIndex, columnIndex = columns - 1 - columnIndex)
+         *
          * <p>Example:<br>
          * <pre>
          * [1, 2, 3]    [3, 2, 1]<br>
          * [4, 5, 6] -> [6, 5, 3]<br>
          * [7, 8, 9]    [9, 8. 7]<br>
          * </pre>
-         * </p>
          */
         ROWS,
 
         /**
-         * <p>Mirror columns, i.e. inverse row index. (rowIndex = rows - 1 - rowIndex, columnIndex = columnIndex)</p>
+         * Mirror columns, i.e. inverse row index. (rowIndex = rows - 1 - rowIndex, columnIndex = columnIndex)
+         *
          * <p>Example:<br>
          * <pre>
          * [1, 2, 3]    [7, 8, 9]<br>
          * [4, 5, 6] -> [4, 5, 6]<br>
          * [7, 8, 9]    [1, 2. 3]<br>
          * </pre>
-         * </p>
          */
         COLUMNS,
     }
 
+    /**
+     * Iterator implementation for matrices
+     * @param <E> element type
+     */
     final class MatrixIterator<E> implements Iterator<E> {
         private final Matrix<E> matrix;
         int row = 0;

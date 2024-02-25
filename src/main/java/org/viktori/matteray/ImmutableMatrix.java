@@ -2,6 +2,7 @@ package org.viktori.matteray;
 
 import org.viktori.matteray.function.MatrixIndexFunction;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -30,13 +31,34 @@ import java.util.stream.Stream;
  * @see Collection
  * @see Array
  */
-public class ImmutableMatrix<E> implements Matrix<E>, Cloneable {
+public class ImmutableMatrix<E> implements Matrix<E>, Cloneable, Serializable {
 
+    @java.io.Serial
+    private static final long serialVersionUID = 1683452586142892160L;
+
+    /**
+     * Shared empty matrix
+     */
     private static final Object[][] EMPTY_MATRIX = new Object[0][0];
 
+    /**
+     * Raw 2D-array to hold elements
+     */
     private final Object[][] elementData;
+
+    /**
+     * Row count of the matrix
+     */
     private final int rows;
+
+    /**
+     * Column count of the matrix
+     */
     private final int columns;
+
+    /**
+     * Total size, rows&times;columns, of the matrix
+     */
     private final long totalSize;
 
     /**
@@ -151,7 +173,17 @@ public class ImmutableMatrix<E> implements Matrix<E>, Cloneable {
         this(matrix instanceof ImmutableMatrix<?> im ? im.elementData : matrix.toArray2D(), true, matrix.rows(), matrix.columns());
     }
 
-    private ImmutableMatrix(Object[][] elementData, boolean trusted, int rows, int columns) {
+    /**
+     * Internal constructor to create a matrix based on a raw 2D array, which also gives you
+     * the ability to trust it. When trusted, the array will not be cloned. This can be used when we
+     * know the 2D array cannot be modified from the outside.
+     *
+     * @param elementData the raw array of data to hold
+     * @param trusted if the array is trusted, it will use the array as it is without cloning it.
+     * @param rows row count to set (not based on the array size!)
+     * @param columns column count to set (not based on array size!)
+     */
+    protected ImmutableMatrix(Object[][] elementData, boolean trusted, int rows, int columns) {
         this.columns = columns;
         this.rows = rows;
         if (rows == 0 || columns == 0) {

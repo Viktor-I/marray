@@ -2,6 +2,7 @@ package org.viktori.matteray;
 
 import org.viktori.matteray.function.ArrayIndexFunction;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -15,7 +16,7 @@ import java.util.stream.Stream;
 /**
  * Java array wrapper which implements the {@code Array} interface, which is immutable and easier
  * to work with than normal arrays.
- *
+ * <p>
  * The class implements all immutable List operations, and permits all elements,
  * including {@code null}. Mutable operations such as {@code set}, {@code add} or {@code remove}
  * will result in an {@link UnsupportedOperationException}.
@@ -31,11 +32,24 @@ import java.util.stream.Stream;
  * @see Collection
  * @see Array
  */
-public class ImmutableArray<E> implements Array<E>, Cloneable {
+public class ImmutableArray<E> implements Array<E>, Cloneable, Serializable {
 
+    @java.io.Serial
+    private static final long serialVersionUID = 2683452586122892159L;
+
+    /**
+     * Shared empty array
+     */
     private static final Object[] EMPTY_ARRAY = new Object[0];
 
+    /**
+     * Raw array to hold the elements
+     */
     private final Object[] elementData;
+
+    /**
+     * Length of the array.
+     */
     private final int size;
 
     /**
@@ -88,11 +102,22 @@ public class ImmutableArray<E> implements Array<E>, Cloneable {
         this(collection instanceof ImmutableArray<?> ia ? ia.elementData : collection.toArray(), true);
     }
 
+    /**
+     * Internal constructor to create an empty array.
+     */
     protected ImmutableArray() {
         this.elementData = EMPTY_ARRAY;
         this.size = 0;
     }
 
+    /**
+     * Internal constructor to create an array based on a raw array, which also gives you
+     * the ability to trust it. When trusted, the array will not be cloned. This can be used when we
+     * know the array cannot be modified from the outside.
+     *
+     * @param elementData the raw array of data to hold
+     * @param trusted if the array is trusted, it will use the array as it is without cloning it.
+     */
     protected ImmutableArray(Object[] elementData, boolean trusted) {
         if (elementData.length == 0) {
             this.elementData = EMPTY_ARRAY;
@@ -119,7 +144,7 @@ public class ImmutableArray<E> implements Array<E>, Cloneable {
     }
 
     /**
-     * Setting an object in an immutable is not supported, but it is part of the
+     * Setting an object in an immutable array is not supported, but it is part of the
      * {@link List} API. This action will always throw an {@link UnsupportedOperationException}.
      *
      * @param index index of the element to replace
@@ -132,21 +157,51 @@ public class ImmutableArray<E> implements Array<E>, Cloneable {
         throw new UnsupportedOperationException();
     }
 
+
+    /**
+     * Returns the number of elements in this array.
+     *
+     * @return the number of elements in this array
+     */
     @Override
     public int size() {
         return size;
     }
 
+
+    /**
+     * Returns {@code true} if this array contains no elements.
+     *
+     * @return {@code true} if this array contains no elements
+     */
     @Override
     public boolean isEmpty() {
         return size == 0;
     }
 
+    /**
+     * Returns {@code true} if this array contains the specified element.
+     * More formally, returns {@code true} if and only if this array contains
+     * at least one element {@code e} such that
+     * {@code Objects.equals(o, e)}.
+     *
+     * @param o element whose presence in this array is to be tested
+     * @return {@code true} if this array contains the specified element
+     */
     @Override
     public boolean contains(Object o) {
         return indexOf(o) >= 0;
     }
 
+    /**
+     * Returns {@code true} if this array contains all of the elements of the
+     * specified collection.
+     *
+     * @param  collection collection to be checked for containment in this array
+     * @return {@code true} if this array contains all of the elements of the
+     *         specified collection
+     * @see #contains(Object)
+     */
     @Override
     public boolean containsAll(Collection<?> collection) {
         for (Object e : collection) {
