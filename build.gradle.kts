@@ -2,9 +2,10 @@ plugins {
     id("java-library")
     id("maven-publish")
     id("idea")
+    id("signing")
 }
 
-val release =  System.getProperty("release")?.toBoolean() ?: false
+val release = System.getProperty("release")?.toBoolean() ?: false
 val versionSuffix = if (release) "" else "-SNAPSHOT"
 
 version = "0.1${versionSuffix}"
@@ -33,6 +34,10 @@ java {
 }
 
 publishing {
+    repositories {
+        maven("build/mavenRepo")
+    }
+
     publications {
         create<MavenPublication>("mavenJava") {
             artifacts {
@@ -62,6 +67,8 @@ publishing {
 
                 scm {
                     url = "https://github.com/Viktor-I/matteray/"
+                    connection = "scm:git:git://github.com/Viktor-I/matteray.git"
+                    developerConnection = "scm:git:ssh://git@github.com/Viktor-I/matteray.git"
                 }
 
                 issueManagement {
@@ -86,5 +93,11 @@ tasks.javadoc {
     (options as? StandardJavadocDocletOptions)?.apply {
         tags = listOf("apiNote", "implSpec", "implNote")
         addBooleanOption("html5", true)
+    }
+}
+
+signing {
+    if (System.getenv("PGP_KEY") != null) {
+        sign(publishing.publications["mavenJava"])
     }
 }
